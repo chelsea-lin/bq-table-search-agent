@@ -59,6 +59,7 @@ def setup_before_agent_call(callback_context: CallbackContext):
 
     """
         )
+        print(f"DEBUG: {callback_context._invocation_context.agent.instruction}")
 
 
 root_agent = Agent(
@@ -67,16 +68,16 @@ root_agent = Agent(
     instruction=return_instructions_root(),
     global_instruction=(
         f"""
-        You are a Data Science and Data Analytics Multi Agent System.
+        You are a data expert to find relevant BigQuery tables from user intent.
         Todays date: {date_today}
         """
     ),
-    sub_agents=[bqml_agent],
-    tools=[
-        call_db_agent,
-        call_ds_agent,
-        load_artifacts,
-    ],
+    # sub_agents=[bqml_agent],
+    # tools=[
+    #     call_db_agent,
+    #     call_ds_agent,
+    #     load_artifacts,
+    # ],
     before_agent_callback=setup_before_agent_call,
     generate_content_config=types.GenerateContentConfig(temperature=0.01),
 )
