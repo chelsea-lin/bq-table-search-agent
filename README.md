@@ -6,36 +6,36 @@ This project addresses a critical challenge in data analytics: finding the right
 
 ## Setup and Installation
 
-1.  **Install Dependencies**
+1. **Install Dependencies**
 
-    ```bash
-    python -m venv venv
-    source venv/bin/activate
-    pip install -e .[all]
-    ```
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -e .[all]
+```
+2. **Configurate the .env file**
 
+```bash
+cp .env-example .env
+```
 
-2.  **Setup .env-example **
-
-Copy `.env-example` as `.env`
-    ```bash
-    cp .env-example .env
-    ```
 
 Run agent with ADK Web UI:
-    ```bash
-    adk web
-    ```
 
-3.  **Run Agents**
+```bash
+adk web
+```
+
+3. **Run Agents**
 
 Run agent in CLI:
-    ```bash
-    adk run table_search
-    ```
+
+```bash
+adk run table_search
+```
 
 Run agent with ADK Web UI:
-    ```bash
-    adk web
-    ```
 
+```bash
+adk web
+```
