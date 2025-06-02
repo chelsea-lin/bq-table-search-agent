@@ -15,7 +15,19 @@ This project addresses a critical challenge in data analytics: finding the right
     ```
 
 
-2.  **Run Agents**
+2.  **Setup .env-example **
+
+Copy `.env-example` as `.env`
+    ```bash
+    cp .env-example .env
+    ```
+
+Run agent with ADK Web UI:
+    ```bash
+    adk web
+    ```
+
+3.  **Run Agents**
 
 Run agent in CLI:
     ```bash
