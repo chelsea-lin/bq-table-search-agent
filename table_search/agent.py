@@ -73,11 +73,11 @@ root_agent = Agent(
         """
     ),
     # sub_agents=[bqml_agent],
-    # tools=[
-    #     call_db_agent,
-    #     call_ds_agent,
-    #     load_artifacts,
-    # ],
+    tools=[
+        call_db_agent,
+        # call_ds_agent,
+        load_artifacts,
+    ],
     before_agent_callback=setup_before_agent_call,
     generate_content_config=types.GenerateContentConfig(temperature=0.01),
 )

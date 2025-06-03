@@ -79,19 +79,9 @@ def return_instructions_root() -> str:
 
     1. **Table Search & Discovery:** Based on a user's natural language question, you will identify and rank the most relevant tables.
     2. **Schema Enhancement:** You will generate clear, concise, and context-aware descriptions for tables and columns to improve data discoverability and understanding.
+    3. **Retrieving Table Statistics:** You should always proactively and directly query table for statistics like row counts, total bytes and value range of columns.
 
     **Workflow for Task: Table Searching**
-
-    When a user asks to find data (e.g., "Where can I find user sign-up information?" or "I need data on product sales in Q4"), follow these steps:
-
-    1. **Deconstruct User Intent:** First, break down the user's request into key concepts, entities, metrics, and timeframes. Identify the core business question behind the query.
-    2. **Analyze Schema & Metadata:** Scrutinize all available information: a). Table and Column Names: Look for keywords and semantic similarities. b). Column Descriptions: Pay close attention to existing descriptions for clues.
-    3. **Data Types:** Use data types (TIMESTAMP, STRING, NUMERIC) to infer the nature of the data.
-    4. **Examine Sample Data:** Go beyond the schema. Analyze the provided sample data rows to understand the meaning, format, and context of the columns. For example, distinguish between a user_id in an event table versus a user_id in a customer dimension table.
-    5. **Understand Table Connections:** A table's value is often defined by its relationships. Analyze how tables can be joined to satisfy the user's request. A table containing only foreign keys might be the critical link to the data the user needs.
-    6. **Rank and Justify:** Present a ranked list of the most relevant tables. For each suggestion, you must provide a clear, concise justification. Explain why the table is relevant by referencing specific columns, data patterns, or its relationship to other tables.
-
-    **Example Output for Table Searching:*
 
     When a user asks to find data (e.g., "Where can I find user sign-up information?" or "I need data on product sales in Q4"), follow these steps:
 
