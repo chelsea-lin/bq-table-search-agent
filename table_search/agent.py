@@ -26,10 +26,7 @@ from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.tools import load_artifacts
 
-from .sub_agents import bqml_agent
-from .sub_agents.bigquery.tools import (
-    get_database_settings as get_bq_database_settings,
-)
+from .sub_agents.bigquery.tools import get_project_settings
 from .prompts import return_instructions_root
 from .tools import call_db_agent, call_ds_agent
 
@@ -38,28 +35,25 @@ date_today = date.today()
 
 def setup_before_agent_call(callback_context: CallbackContext):
     """Setup the agent."""
-
-    # setting up database settings in session.state
-    if "database_settings" not in callback_context.state:
-        db_settings = dict()
-        db_settings["use_database"] = "BigQuery"
-        callback_context.state["all_db_settings"] = db_settings
-
     # setting up schema in instruction
-    if callback_context.state["all_db_settings"]["use_database"] == "BigQuery":
-        callback_context.state["database_settings"] = get_bq_database_settings()
-        schema = callback_context.state["database_settings"]["bq_ddl_schema"]
+    project_settings = get_project_settings()
+    callback_context.state["project_settings"] = project_settings
+    
+    dataset_settings = project_settings.get("dataset_settings", {})
 
-        callback_context._invocation_context.agent.instruction = (
-            return_instructions_root()
-            + f"""
+    schema_prompt_parts = []
 
-    --------- The BigQuery schema of the relevant data with a few sample rows. ---------
-    {schema}
+    schema_prompt_parts.append("\n--------- The BigQuery schemas of the available datasets and their tables. ---------")
 
-    """
-        )
-        print(f"DEBUG: {callback_context._invocation_context.agent.instruction}")
+    for dataset_id, schema_content in dataset_settings.items():
+        schema_prompt_parts.append(f"\n--- Schema for Dataset: `{dataset_id}` ---\n")
+        schema_prompt_parts.append(schema_content)
+    
+    full_schema_string = "\n".join(schema_prompt_parts)
+
+    callback_context._invocation_context.agent.instruction = f"{return_instructions_root()}\n{full_schema_string}"
+
+    print(f"DEBUG: {callback_context._invocation_context.agent.instruction}")
 
 
 root_agent = Agent(
@@ -68,16 +62,17 @@ root_agent = Agent(
     instruction=return_instructions_root(),
     global_instruction=(
         f"""
-        You are a data expert to find relevant BigQuery tables from user intent.
-        Todays date: {date_today}
+        You are a BigQuery AI expert, acting as an intelligent bridge to a complex database.
+        Your mission is to understand a user's natural language request and help them discover the exact data they need.
+        Your capabilities include: finding relevant datasets, identifying specific tables, and clarifying schema information.
+        Today's date is {date_today}.
         """
     ),
-    # sub_agents=[bqml_agent],
-    # tools=[
-    #     call_db_agent,
-    #     call_ds_agent,
-    #     load_artifacts,
-    # ],
+    tools=[
+        call_db_agent,
+        # call_ds_agent,
+        # load_artifacts,
+    ],
     before_agent_callback=setup_before_agent_call,
     generate_content_config=types.GenerateContentConfig(temperature=0.01),
 )

@@ -23,6 +23,15 @@ from google.genai import types
 from . import tools
 from .chase_sql import chase_db_tools
 from .prompts import return_instructions_bigquery
+from google.adk.tools.bigquery import BigQueryCredentialsConfig
+from google.adk.tools.bigquery import BigQueryToolset
+import google.auth
+
+application_default_credentials, _ = google.auth.default()
+credentials_config = BigQueryCredentialsConfig(
+    credentials=application_default_credentials
+)
+bigquery_toolset = BigQueryToolset(credentials_config=credentials_config, tool_filter = ["list_dataset_ids", "get_dataset_info", "list_table_ids", "get_table_info"])
 
 NL2SQL_METHOD = os.getenv("NL2SQL_METHOD", "BASELINE")
 
@@ -30,9 +39,9 @@ NL2SQL_METHOD = os.getenv("NL2SQL_METHOD", "BASELINE")
 def setup_before_agent_call(callback_context: CallbackContext) -> None:
     """Setup the agent."""
 
-    if "database_settings" not in callback_context.state:
-        callback_context.state["database_settings"] = \
-            tools.get_database_settings()
+    if "project_settings" not in callback_context.state:
+        callback_context.state["project_settings"] = \
+            tools.get_project_settings()
 
 
 database_agent = Agent(
