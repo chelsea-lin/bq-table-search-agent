@@ -1,0 +1,120 @@
+{
+    "tables": [
+      {
+        "name": "REGION",
+        "primary_key": "R_REGIONKEY"
+      },
+      {
+        "name": "NATION",
+        "primary_key": "N_NATIONKEY"
+      },
+      {
+        "name": "CUSTOMER",
+        "primary_key": "C_CUSTKEY"
+      },
+      {
+        "name": "SUPPLIER",
+        "primary_key": "S_SUPPKEY"
+      },
+      {
+        "name": "PART",
+        "primary_key": "P_PARTKEY"
+      },
+      {
+        "name": "ORDERS",
+        "primary_key": "O_ORDERKEY"
+      },
+      {
+        "name": "PARTSUPP",
+        "primary_key": "PS_PARTKEY"
+      },
+      {
+        "name": "LINEITEM",
+        "primary_key": "L_ORDERKEY"
+      }
+    ],
+    "relationships": [
+      {
+        "from_table": "LINEITEM",
+        "from_column": "L_ORDERKEY",
+        "to_table": "ORDERS",
+        "to_column": "O_ORDERKEY"
+      },
+      {
+        "from_table": "SUPPLIER",
+        "from_column": "S_NATIONKEY",
+        "to_table": "NATION",
+        "to_column": "N_NATIONKEY"
+      },
+      {
+        "from_table": "CUSTOMER",
+        "from_column": "C_NATIONKEY",
+        "to_table": "NATION",
+        "to_column": "N_NATIONKEY"
+      },
+      {
+        "from_table": "LINEITEM",
+        "from_column": "L_SUPPKEY",
+        "to_table": "SUPPLIER",
+        "to_column": "S_SUPPKEY"
+      },
+      {
+        "from_table": "LINEITEM",
+        "from_column": "L_PARTKEY",
+        "to_table": "PART",
+        "to_column": "P_PARTKEY"
+      },
+      {
+        "from_table": "NATION",
+        "from_column": "N_REGIONKEY",
+        "to_table": "REGION",
+        "to_column": "R_REGIONKEY"
+      },
+      {
+        "from_table": "PARTSUPP",
+        "from_column": "PS_PARTKEY",
+        "to_table": "PART",
+        "to_column": "P_PARTKEY"
+      },
+      {
+        "from_table": "PARTSUPP",
+        "from_column": "PS_SUPPKEY",
+        "to_table": "SUPPLIER",
+        "to_column": "S_SUPPKEY"
+      },
+      {
+        "from_table": "LINEITEM",
+        "from_column": "L_PARTKEY",
+        "to_table": "PARTSUPP",
+        "to_column": "PS_PARTKEY"
+      },
+      {
+        "from_table": "PARTSUPP",
+        "from_column": "PS_SUPPKEY",
+        "to_table": "LINEITEM",
+        "to_column": "L_SUPPKEY"
+      }
+    ],
+    "suggestedQuery": [
+        {
+            "question": "What is the 3-month moving average of the order fulfillment rate, calculated as the percentage of line items shipped within 7 days of the order date, for each region?",
+            "sqlCode": "WITH FulfillmentData AS ( SELECT o.O_ORDERDATE, n.N_NAME AS nation, CASE WHEN DATE_DIFF(l.L_SHIPDATE, o.O_ORDERDATE, DAY) <= 7 THEN 1 ELSE 0 END AS is_fulfilled FROM `tpch_0001g.ORDERS` o JOIN `tpch_0001g.LINEITEM` l ON o.O_ORDERKEY = l.L_ORDERKEY JOIN `tpch_0001g.CUSTOMER` c ON o.O_CUSTKEY = c.C_CUSTKEY JOIN `tpch_0001g.NATION` n ON c.C_NATIONKEY = n.N_NATIONKEY ), FulfillmentRate AS ( SELECT O_ORDERDATE, nation, AVG(is_fulfilled) AS fulfillment_rate FROM FulfillmentData GROUP BY 1, 2 ) SELECT O_ORDERDATE, nation, fulfillment_rate, AVG(fulfillment_rate) OVER (PARTITION BY nation ORDER BY O_ORDERDATE ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS moving_avg_fulfillment_rate FROM FulfillmentRate ORDER BY nation, O_ORDERDATE;"
+        },
+        {
+            "question": "What is the quarterly trend of the average supplier account balance for each region, and what is the difference in average account balance between consecutive quarters?",
+            "sqlCode": "WITH QuarterlyBalances AS ( SELECT FORMAT_DATE('%Y-%q', o.O_ORDERDATE) AS order_quarter, r.R_NAME AS region, AVG(s.S_ACCTBAL) AS avg_account_balance FROM `tpch_0001g.ORDERS` o JOIN `tpch_0001g.CUSTOMER` c ON o.O_CUSTKEY = c.C_CUSTKEY JOIN `tpch_0001g.NATION` n ON c.C_NATIONKEY = n.N_NATIONKEY JOIN `tpch_0001g.REGION` r ON n.N_REGIONKEY = r.R_REGIONKEY JOIN `tpch_0001g.LINEITEM` l ON o.O_ORDERKEY = l.L_ORDERKEY JOIN `tpch_0001g.SUPPLIER` s ON l.L_SUPPKEY = s.S_SUPPKEY GROUP BY 1, 2 ) SELECT order_quarter, region, avg_account_balance, LAG(avg_account_balance, 1, 0) OVER (PARTITION BY region ORDER BY order_quarter) AS previous_quarter_balance, avg_account_balance - LAG(avg_account_balance, 1, 0) OVER (PARTITION BY region ORDER BY order_quarter) AS balance_difference FROM QuarterlyBalances ORDER BY region, order_quarter;"
+        },
+        {
+            "question": "Calculate the correlation between customer account balance and order total price, grouped by nation.",
+            "sqlCode": "SELECT N.N_NAME, CORR(C.C_ACCTBAL, O.O_TOTALPRICE) AS AccountBalance_OrderPrice_Correlation FROM `tpch_0001g.CUSTOMER` C JOIN `tpch_0001g.ORDERS` O ON C.C_CUSTKEY = O.O_CUSTKEY JOIN `tpch_0001g.NATION` N ON C.C_NATIONKEY = N.N_NATIONKEY GROUP BY N.N_NAME;"
+        },
+        {
+            "question": "Calculate the correlation between customer account balance and order total price to understand if wealthier customers tend to place larger orders.",
+            "sqlCode": "SELECT COVAR_POP(p.P_RETAILPRICE, ps.PS_SUPPLYCOST) AS RetailPrice_SupplyCost_Covariance FROM `tpch_0001g.PART` p JOIN `tpch_0001g.PARTSUPP` ps ON p.P_PARTKEY = ps.PS_PARTKEY;"
+        },
+        {
+            "question": " Calculate the covariance between part retail price and supply cost to understand how supply cost affects the retail price of parts.",
+            "sqlCode": "SELECT COVAR_POP(p.P_RETAILPRICE, ps.PS_SUPPLYCOST) AS RetailPrice_SupplyCost_Covariance FROM `tpch_0001g.PART` p JOIN `tpch_0001g.PARTSUPP` ps ON p.P_PARTKEY = ps.PS_PARTKEY;"
+        }
+    ]
+  }
