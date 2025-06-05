@@ -1,0 +1,39 @@
+<div class="container">
+  <h1>Semantic View Agent</h1>
+
+  <mat-form-field appearance="outline" class="prompt-input">
+    <mat-label>Your Prompt</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="userPrompt"
+      placeholder="Ask me anything..."
+    />
+    <mat-hint>Press the button to get a response</mat-hint>
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onClick()"
+    [disabled]="loading || !userPrompt"
+  >
+    {{ loading ? 'Waiting...' : 'Click me!' }}
+  </button>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" class="progress-bar"></mat-progress-bar>
+  }
+
+  @if (response && !loading) {
+    <mat-card class="response-card">
+      <mat-card-header>
+        <mat-card-title>Response</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ response }}</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+</div>
