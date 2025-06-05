@@ -39,3 +39,39 @@ Run agent with ADK Web UI:
 ```bash
 adk web
 ```
+
+
+## To use the web UI
+
+1. **Install NPM and Angular CLI**
+```bash
+sudo apt install npm
+npm install -g @angular/cli
+```
+
+If the installation is successful, you should be able to run this command
+```
+ng --version
+```
+
+
+2. **Start ADK API Server**
+Under the root directory
+```bash
+adk api_server
+```
+More details at https://google.github.io/adk-docs/get-started/testing/
+
+
+3. **Start Web Server**
+Navigate to the `web` directory:
+```bash
+cd web
+```
+
+and run
+```
+ng serve
+```
+
+Then visit `localhost:4200` in your browser.
