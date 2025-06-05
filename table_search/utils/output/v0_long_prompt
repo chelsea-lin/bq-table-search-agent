@@ -1,0 +1,284 @@
+{
+  "tables": [
+    {
+      "name": "REGION",
+      "primary_key": "R_REGIONKEY"
+    },
+    {
+      "name": "NATION",
+      "primary_key": "N_NATIONKEY"
+    },
+    {
+      "name": "CUSTOMER",
+      "primary_key": "C_CUSTKEY"
+    },
+    {
+      "name": "SUPPLIER",
+      "primary_key": "S_SUPPKEY"
+    },
+    {
+      "name": "PART",
+      "primary_key": "P_PARTKEY"
+    },
+    {
+      "name": "ORDERS",
+      "primary_key": "O_ORDERKEY"
+    },
+    {
+      "name": "PARTSUPP",
+      "primary_key": "PS_PARTKEY"
+    },
+    {
+      "name": "LINEITEM",
+      "primary_key": "L_ORDERKEY"
+    }
+  ],
+  "relationships": [
+    {
+      "from_table": "CUSTOMER",
+      "from_column": "C_NATIONKEY",
+      "to_table": "NATION",
+      "to_column": "N_NATIONKEY"
+    },
+    {
+      "from_table": "NATION",
+      "from_column": "N_REGIONKEY",
+      "to_table": "REGION",
+      "to_column": "R_REGIONKEY"
+    },
+    {
+      "from_table": "SUPPLIER",
+      "from_column": "S_NATIONKEY",
+      "to_table": "NATION",
+      "to_column": "N_NATIONKEY"
+    },
+    {
+      "from_table": "ORDERS",
+      "from_column": "O_CUSTKEY",
+      "to_table": "CUSTOMER",
+      "to_column": "C_CUSTKEY"
+    },
+    {
+      "from_table": "LINEITEM",
+      "from_column": "L_ORDERKEY",
+      "to_table": "ORDERS",
+      "to_column": "O_ORDERKEY"
+    },
+    {
+      "from_table": "LINEITEM",
+      "from_column": "L_PARTKEY",
+      "to_table": "PART",
+      "to_column": "P_PARTKEY"
+    },
+    {
+      "from_table": "LINEITEM",
+      "from_column": "L_SUPPKEY",
+      "to_table": "SUPPLIER",
+      "to_column": "S_SUPPKEY"
+    },
+    {
+      "from_table": "PARTSUPP",
+      "from_column": "PS_PARTKEY",
+      "to_table": "PART",
+      "to_column": "P_PARTKEY"
+    },
+    {
+      "from_table": "PARTSUPP",
+      "from_column": "PS_SUPPKEY",
+      "to_table": "SUPPLIER",
+      "to_column": "S_SUPPKEY"
+    }
+  ],
+  "dimensions": [
+    {
+      "name": "Region Name",
+      "column": "REGION.R_NAME"
+    },
+    {
+      "name": "Nation Name",
+      "column": "NATION.N_NAME"
+    },
+    {
+      "name": "Customer Name",
+      "column": "CUSTOMER.C_NAME"
+    },
+    {
+      "name": "Customer Address",
+      "column": "CUSTOMER.C_ADDRESS"
+    },
+    {
+      "name": "Customer Phone",
+      "column": "CUSTOMER.C_PHONE"
+    },
+    {
+      "name": "Customer Market Segment",
+      "column": "CUSTOMER.C_MKTSEGMENT"
+    },
+    {
+      "name": "Supplier Name",
+      "column": "SUPPLIER.S_NAME"
+    },
+    {
+      "name": "Supplier Address",
+      "column": "SUPPLIER.S_ADDRESS"
+    },
+    {
+      "name": "Supplier Phone",
+      "column": "SUPPLIER.S_PHONE"
+    },
+    {
+      "name": "Part Name",
+      "column": "PART.P_NAME"
+    },
+    {
+      "name": "Part Manufacturer",
+      "column": "PART.P_MFGR"
+    },
+    {
+      "name": "Part Brand",
+      "column": "PART.P_BRAND"
+    },
+    {
+      "name": "Part Type",
+      "column": "PART.P_TYPE"
+    },
+    {
+      "name": "Part Size",
+      "column": "PART.P_SIZE"
+    },
+    {
+      "name": "Part Container",
+      "column": "PART.P_CONTAINER"
+    },
+    {
+      "name": "Order Status",
+      "column": "ORDERS.O_ORDERSTATUS"
+    },
+    {
+      "name": "Order Date",
+      "column": "ORDERS.O_ORDERDATE"
+    },
+    {
+      "name": "Order Priority",
+      "column": "ORDERS.O_ORDERPRIORITY"
+    },
+    {
+      "name": "Order Clerk",
+      "column": "ORDERS.O_CLERK"
+    },
+    {
+      "name": "Order Shipping Priority",
+      "column": "ORDERS.O_SHIPPRIORITY"
+    },
+    {
+      "name": "Line Number",
+      "column": "LINEITEM.L_LINENUMBER"
+    },
+    {
+      "name": "Lineitem Return Flag",
+      "column": "LINEITEM.L_RETURNFLAG"
+    },
+    {
+      "name": "Lineitem Line Status",
+      "column": "LINEITEM.L_LINESTATUS"
+    },
+    {
+      "name": "Lineitem Ship Date",
+      "column": "LINEITEM.L_SHIPDATE"
+    },
+    {
+      "name": "Lineitem Commit Date",
+      "column": "LINEITEM.L_COMMITDATE"
+    },
+    {
+      "name": "Lineitem Receipt Date",
+      "column": "LINEITEM.L_RECEIPTDATE"
+    },
+    {
+      "name": "Lineitem Shipping Instructions",
+      "column": "LINEITEM.L_SHIPINSTRUCT"
+    },
+    {
+      "name": "Lineitem Shipping Mode",
+      "column": "LINEITEM.L_SHIPMODE"
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Total Customers",
+      "sql": "COUNT(CUSTOMER.C_CUSTKEY)"
+    },
+    {
+      "name": "Total Customer Account Balance",
+      "sql": "SUM(CUSTOMER.C_ACCTBAL)"
+    },
+    {
+      "name": "Average Customer Account Balance",
+      "sql": "AVG(CUSTOMER.C_ACCTBAL)"
+    },
+    {
+      "name": "Total Suppliers",
+      "sql": "COUNT(SUPPLIER.S_SUPPKEY)"
+    },
+    {
+      "name": "Total Supplier Account Balance",
+      "sql": "SUM(SUPPLIER.S_ACCTBAL)"
+    },
+    {
+      "name": "Total Unique Parts",
+      "sql": "COUNT(PART.P_PARTKEY)"
+    },
+    {
+      "name": "Average Part Retail Price",
+      "sql": "AVG(PART.P_RETAILPRICE)"
+    },
+    {
+      "name": "Total Orders",
+      "sql": "COUNT(ORDERS.O_ORDERKEY)"
+    },
+    {
+      "name": "Total Order Revenue",
+      "sql": "SUM(ORDERS.O_TOTALPRICE)"
+    },
+    {
+      "name": "Average Order Value",
+      "sql": "AVG(ORDERS.O_TOTALPRICE)"
+    },
+    {
+      "name": "Number of Order Lines",
+      "sql": "COUNT(LINEITEM.L_ORDERKEY)"
+    },
+    {
+      "name": "Total Quantity Sold",
+      "sql": "SUM(LINEITEM.L_QUANTITY)"
+    },
+    {
+      "name": "Total Gross Revenue (Lineitem)",
+      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE)"
+    },
+    {
+      "name": "Average Discount Percentage",
+      "sql": "AVG(LINEITEM.L_DISCOUNT) * 100"
+    },
+    {
+      "name": "Total Net Revenue (After Discount)",
+      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE * (1 - LINEITEM.L_DISCOUNT))"
+    },
+    {
+      "name": "Total Revenue (Incl. Tax, After Discount)",
+      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE * (1 - LINEITEM.L_DISCOUNT) * (1 + LINEITEM.L_TAX))"
+    },
+    {
+      "name": "Total Available Quantity from Suppliers",
+      "sql": "SUM(PARTSUPP.PS_AVAILQTY)"
+    },
+    {
+      "name": "Total Supply Cost from Suppliers",
+      "sql": "SUM(PARTSUPP.PS_SUPPLYCOST)"
+    },
+    {
+      "name": "Average Supply Cost from Suppliers",
+      "sql": "AVG(PARTSUPP.PS_SUPPLYCOST)"
+    }
+  ]
+}
