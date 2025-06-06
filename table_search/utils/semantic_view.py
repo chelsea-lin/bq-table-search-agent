@@ -16,6 +16,7 @@ from __future__ import annotations
 
 
 import os
+import re
 from pathlib import Path
 from dotenv import load_dotenv, set_key
 import vertexai
@@ -152,6 +153,79 @@ For a BigQuery schema containing `SUPPLIER`, `NATION`, and `REGION` tables, your
     """
     return prompt
 
+def sql_gen_prompt(struct, project, dataset):
+    prompt = f"""
+You are an expert data analyst who specializes in creating high-quality training data for SQL-generating AI models.
+
+Your task is to generate 10 diverse pairs of natural language questions and their corresponding SQL queries based on the JSON struct provided below.
+
+{struct}
+
+**Instructions:**
+1.  **Realistic Questions:** The questions must reflect realistic business inquiries that a user would ask.
+2.  **Use Schema Context:** Leverage the `dimensions` for natural language phrasing in the questions and the `metrics` for complex calculations in the SQL.
+3.  **Correct Joins:** The SQL queries must be valid and correctly join tables based on the `relationships` provided in the struct.
+4.  **Variety:** Create a mix of queries, from simple lookups to complex aggregations involving multiple joins, filtering, and ordering.
+5.  **Strict Output Format:** You MUST format your entire response as a single JSON array `[]`. Each element in the array must be a JSON object `{{}}` with exactly two keys: a `question` key and a `sql` key. Do not include any explanations or text outside of this JSON structure.
+6.  The bigquery project is {project}, dataset is {dataset}
+**Example of the required output format:**
+```json
+[
+  {{
+    "question": "An example question about data.",
+    "sql": "SELECT column FROM table;"
+  }}
+]
+"""
+    return prompt
+
+def clean_json_string(input_str: str) -> str:
+    cleaned_str = input_str.strip()
+    if cleaned_str.startswith("```json"):
+        cleaned_str = cleaned_str[7:]
+    elif cleaned_str.startswith("```"):
+        cleaned_str = cleaned_str[3:]
+    if cleaned_str.endswith("```"):
+        cleaned_str = cleaned_str[:-3]
+        
+    return cleaned_str.strip()
+
+def validate_and_inject_examples(llm_response_str: str, schema_json_str: str):
+    schema_data = json.loads(clean_json_string(schema_json_str))
+    qa_pairs = json.loads(clean_json_string(llm_response_str))
+
+    valid_examples = []
+    try:
+        client = bigquery.Client()
+        job_config = bigquery.QueryJobConfig(dry_run=True, use_query_cache=False)
+    except Exception as e:
+        raise f'{{"error": "Could not initialize BigQuery client: {e}"}}'
+    
+    print("--- Starting SQL Validation ---")
+    for i, pair in enumerate(qa_pairs, 1):
+        question = pair.get("question", "N/A")
+        sql = pair.get("sql", None)
+
+        print(f"\n Validating Pair {i}: \"{question}\"")
+        if not sql:
+            print("Status: SKIPPED (No SQL provided)")
+            continue
+
+        try:
+            client.query(sql, job_config=job_config)
+            print("Status: VALID")
+            valid_examples.append(pair)
+        except:
+            pass
+
+
+    print(f"\n Validation complete. Injecting {len(valid_examples)} valid examples into the JSON.")
+    schema_data["example_sqls"] = valid_examples
+
+    return schema_data
+
+    
+
 def gen_table_info():
     datasets = [item.strip() for item in BQ_DATASET_IDS.split(',')]
     if len(datasets) != 1:
@@ -188,6 +262,21 @@ def gen_semantic_view():
         safety_settings=SAFETY_FILTER_CONFIG,
     ).text
     print(response)
+    sql_response = model.generate_content(
+        sql_gen_prompt(response, project=BQ_PROJECT_ID, dataset=BQ_DATASET_IDS.split(",")[0]),
+        generation_config=GenerationConfig(
+            temperature=0.01,
+        ),
+        safety_settings=SAFETY_FILTER_CONFIG,
+    ).text
+    print(sql_response)
+
+    final_view = validate_and_inject_examples(sql_response, response)
+    output_filename = "final_schema.json"
+    with open(output_filename, 'w', encoding='utf-8') as f:
+        json.dump(final_view, f, ensure_ascii=False, indent=2)
+
+    
 
 
 if __name__ == '__main__':
