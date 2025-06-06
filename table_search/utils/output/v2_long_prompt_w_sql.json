@@ -1,0 +1,302 @@
+{
+  "tables": [
+    {
+      "name": "CUSTOMER",
+      "primary_key": "C_CUSTKEY"
+    },
+    {
+      "name": "LINEITEM",
+      "primary_key": "L_ORDERKEY"
+    },
+    {
+      "name": "NATION",
+      "primary_key": "N_NATIONKEY"
+    },
+    {
+      "name": "ORDERS",
+      "primary_key": "O_ORDERKEY"
+    },
+    {
+      "name": "PART",
+      "primary_key": "P_PARTKEY"
+    },
+    {
+      "name": "PARTSUPP",
+      "primary_key": "PS_PARTKEY"
+    },
+    {
+      "name": "REGION",
+      "primary_key": "R_REGIONKEY"
+    },
+    {
+      "name": "SUPPLIER",
+      "primary_key": "S_SUPPKEY"
+    }
+  ],
+  "relationships": [
+    {
+      "from_table": "ORDERS",
+      "from_column": "O_CUSTKEY",
+      "to_table": "CUSTOMER",
+      "to_column": "C_CUSTKEY"
+    },
+    {
+      "from_table": "CUSTOMER",
+      "from_column": "C_NATIONKEY",
+      "to_table": "NATION",
+      "to_column": "N_NATIONKEY"
+    },
+    {
+      "from_table": "SUPPLIER",
+      "from_column": "S_NATIONKEY",
+      "to_table": "NATION",
+      "to_column": "N_NATIONKEY"
+    },
+    {
+      "from_table": "NATION",
+      "from_column": "N_REGIONKEY",
+      "to_table": "REGION",
+      "to_column": "R_REGIONKEY"
+    },
+    {
+      "from_table": "LINEITEM",
+      "from_column": "L_ORDERKEY",
+      "to_table": "ORDERS",
+      "to_column": "O_ORDERKEY"
+    },
+    {
+      "from_table": "LINEITEM",
+      "from_column": "L_PARTKEY",
+      "to_table": "PARTSUPP",
+      "to_column": "PS_PARTKEY"
+    },
+    {
+      "from_table": "LINEITEM",
+      "from_column": "L_SUPPKEY",
+      "to_table": "PARTSUPP",
+      "to_column": "PS_SUPPKEY"
+    },
+    {
+      "from_table": "PARTSUPP",
+      "from_column": "PS_PARTKEY",
+      "to_table": "PART",
+      "to_column": "P_PARTKEY"
+    },
+    {
+      "from_table": "PARTSUPP",
+      "from_column": "PS_SUPPKEY",
+      "to_table": "SUPPLIER",
+      "to_column": "S_SUPPKEY"
+    }
+  ],
+  "dimensions": [
+    {
+      "name": "Customer Name",
+      "column": "CUSTOMER.C_NAME"
+    },
+    {
+      "name": "Customer Market Segment",
+      "column": "CUSTOMER.C_MKTSEGMENT"
+    },
+    {
+      "name": "Order Status",
+      "column": "ORDERS.O_ORDERSTATUS"
+    },
+    {
+      "name": "Order Date",
+      "column": "ORDERS.O_ORDERDATE"
+    },
+    {
+      "name": "Order Priority",
+      "column": "ORDERS.O_ORDERPRIORITY"
+    },
+    {
+      "name": "Order Clerk",
+      "column": "ORDERS.O_CLERK"
+    },
+    {
+      "name": "Line Item Return Flag",
+      "column": "LINEITEM.L_RETURNFLAG"
+    },
+    {
+      "name": "Line Item Status",
+      "column": "LINEITEM.L_LINESTATUS"
+    },
+    {
+      "name": "Line Item Ship Date",
+      "column": "LINEITEM.L_SHIPDATE"
+    },
+    {
+      "name": "Line Item Commit Date",
+      "column": "LINEITEM.L_COMMITDATE"
+    },
+    {
+      "name": "Line Item Receipt Date",
+      "column": "LINEITEM.L_RECEIPTDATE"
+    },
+    {
+      "name": "Line Item Ship Instruct",
+      "column": "LINEITEM.L_SHIPINSTRUCT"
+    },
+    {
+      "name": "Line Item Ship Mode",
+      "column": "LINEITEM.L_SHIPMODE"
+    },
+    {
+      "name": "Part Name",
+      "column": "PART.P_NAME"
+    },
+    {
+      "name": "Part Manufacturer",
+      "column": "PART.P_MFGR"
+    },
+    {
+      "name": "Part Brand",
+      "column": "PART.P_BRAND"
+    },
+    {
+      "name": "Part Type",
+      "column": "PART.P_TYPE"
+    },
+    {
+      "name": "Part Size",
+      "column": "PART.P_SIZE"
+    },
+    {
+      "name": "Part Container",
+      "column": "PART.P_CONTAINER"
+    },
+    {
+      "name": "Supplier Name",
+      "column": "SUPPLIER.S_NAME"
+    },
+    {
+      "name": "Nation",
+      "column": "NATION.N_NAME"
+    },
+    {
+      "name": "Region",
+      "column": "REGION.R_NAME"
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Total Customers",
+      "sql": "COUNT(CUSTOMER.C_CUSTKEY)"
+    },
+    {
+      "name": "Average Customer Account Balance",
+      "sql": "AVG(CUSTOMER.C_ACCTBAL)"
+    },
+    {
+      "name": "Total Orders",
+      "sql": "COUNT(ORDERS.O_ORDERKEY)"
+    },
+    {
+      "name": "Sum of Order Total Prices",
+      "sql": "SUM(ORDERS.O_TOTALPRICE)"
+    },
+    {
+      "name": "Average Order Total Price",
+      "sql": "AVG(ORDERS.O_TOTALPRICE)"
+    },
+    {
+      "name": "Number of Line Items",
+      "sql": "COUNT(LINEITEM.L_ORDERKEY)"
+    },
+    {
+      "name": "Total Quantity Sold",
+      "sql": "SUM(LINEITEM.L_QUANTITY)"
+    },
+    {
+      "name": "Total Extended Price (Lineitem)",
+      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE)"
+    },
+    {
+      "name": "Average Discount Percentage",
+      "sql": "AVG(LINEITEM.L_DISCOUNT)"
+    },
+    {
+      "name": "Total Discount Value",
+      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE * LINEITEM.L_DISCOUNT)"
+    },
+    {
+      "name": "Net Extended Price (After Discount)",
+      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE * (1.0 - LINEITEM.L_DISCOUNT))"
+    },
+    {
+      "name": "Total Charged Revenue (After Discount, Incl Tax)",
+      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE * (1.0 - LINEITEM.L_DISCOUNT) * (1.0 + LINEITEM.L_TAX))"
+    },
+    {
+      "name": "Total Parts",
+      "sql": "COUNT(PART.P_PARTKEY)"
+    },
+    {
+      "name": "Average Part Retail Price",
+      "sql": "AVG(PART.P_RETAILPRICE)"
+    },
+    {
+      "name": "Total Suppliers",
+      "sql": "COUNT(SUPPLIER.S_SUPPKEY)"
+    },
+    {
+      "name": "Average Supplier Account Balance",
+      "sql": "AVG(SUPPLIER.S_ACCTBAL)"
+    },
+    {
+      "name": "Total Available Part Quantity",
+      "sql": "SUM(PARTSUPP.PS_AVAILQTY)"
+    },
+    {
+      "name": "Average Part Supply Cost",
+      "sql": "AVG(PARTSUPP.PS_SUPPLYCOST)"
+    },
+    {
+      "name": "Total Stock Value (at Supply Cost)",
+      "sql": "SUM(PARTSUPP.PS_SUPPLYCOST * PARTSUPP.PS_AVAILQTY)"
+    }
+  ],
+  "example_sqls": [
+    {
+      "question": "Show me the names of all customers in the 'AUTOMOBILE' market segment.",
+      "sql": "SELECT C_NAME FROM `bigframes-dev-perf.tpch_0001g.CUSTOMER` WHERE C_MKTSEGMENT = 'AUTOMOBILE';"
+    },
+    {
+      "question": "What is the total count of all orders placed?",
+      "sql": "SELECT COUNT(O_ORDERKEY) FROM `bigframes-dev-perf.tpch_0001g.ORDERS`;"
+    },
+    {
+      "question": "Calculate the sum of total order prices for all customers located in the 'ASIA' region.",
+      "sql": "SELECT SUM(T1.O_TOTALPRICE) FROM `bigframes-dev-perf.tpch_0001g.ORDERS` AS T1 INNER JOIN `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T2 ON T1.O_CUSTKEY = T2.C_CUSTKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T3 ON T2.C_NATIONKEY = T3.N_NATIONKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.REGION` AS T4 ON T3.N_REGIONKEY = T4.R_REGIONKEY WHERE T4.R_NAME = 'ASIA';"
+    },
+    {
+      "question": "Which are the top 5 nations by total charged revenue from line items, and what is their revenue?",
+      "sql": "SELECT T4.N_NAME, SUM(T1.L_EXTENDEDPRICE * (1.0 - T1.L_DISCOUNT) * (1.0 + T1.L_TAX)) AS TotalRevenue FROM `bigframes-dev-perf.tpch_0001g.LINEITEM` AS T1 INNER JOIN `bigframes-dev-perf.tpch_0001g.ORDERS` AS T2 ON T1.L_ORDERKEY = T2.O_ORDERKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T3 ON T2.O_CUSTKEY = T3.C_CUSTKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T4 ON T3.C_NATIONKEY = T4.N_NATIONKEY GROUP BY T4.N_NAME ORDER BY TotalRevenue DESC LIMIT 5;"
+    },
+    {
+      "question": "How many line items were shipped using 'AIR' mail, had a return flag of 'R', and were shipped between January 1, 1995, and March 31, 1995?",
+      "sql": "SELECT COUNT(L_ORDERKEY) FROM `bigframes-dev-perf.tpch_0001g.LINEITEM` WHERE L_SHIPMODE = 'AIR' AND L_RETURNFLAG = 'R' AND L_SHIPDATE BETWEEN '1995-01-01' AND '1995-03-31';"
+    },
+    {
+      "question": "What is the average supply cost for parts of type 'SMALL PLATED COPPER' from suppliers based in 'CANADA'?",
+      "sql": "SELECT AVG(T1.PS_SUPPLYCOST) FROM `bigframes-dev-perf.tpch_0001g.PARTSUPP` AS T1 INNER JOIN `bigframes-dev-perf.tpch_0001g.PART` AS T2 ON T1.PS_PARTKEY = T2.P_PARTKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.SUPPLIER` AS T3 ON T1.PS_SUPPKEY = T3.S_SUPPKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T4 ON T3.S_NATIONKEY = T4.N_NATIONKEY WHERE T2.P_TYPE = 'SMALL PLATED COPPER' AND T4.N_NAME = 'CANADA';"
+    },
+    {
+      "question": "Display the names and account balances for the 10 customers holding the highest account balances.",
+      "sql": "SELECT C_NAME, C_ACCTBAL FROM `bigframes-dev-perf.tpch_0001g.CUSTOMER` ORDER BY C_ACCTBAL DESC LIMIT 10;"
+    },
+    {
+      "question": "For each order priority level, provide the total number of orders and the sum of their total prices.",
+      "sql": "SELECT O_ORDERPRIORITY, COUNT(O_ORDERKEY) AS TotalOrders, SUM(O_TOTALPRICE) AS SumTotalPrices FROM `bigframes-dev-perf.tpch_0001g.ORDERS` GROUP BY O_ORDERPRIORITY ORDER BY O_ORDERPRIORITY;"
+    },
+    {
+      "question": "Identify customers who ordered parts of 'Brand#23' and list their names along with the total quantity of such parts they purchased.",
+      "sql": "SELECT T3.C_NAME, SUM(T1.L_QUANTITY) AS TotalQuantityOrdered FROM `bigframes-dev-perf.tpch_0001g.LINEITEM` AS T1 INNER JOIN `bigframes-dev-perf.tpch_0001g.ORDERS` AS T2 ON T1.L_ORDERKEY = T2.O_ORDERKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T3 ON T2.O_CUSTKEY = T3.C_CUSTKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.PARTSUPP` AS T4 ON T1.L_PARTKEY = T4.PS_PARTKEY AND T1.L_SUPPKEY = T4.PS_SUPPKEY INNER JOIN `bigframes-dev-perf.tpch_0001g.PART` AS T5 ON T4.PS_PARTKEY = T5.P_PARTKEY WHERE T5.P_BRAND = 'Brand#23' GROUP BY T3.C_NAME ORDER BY TotalQuantityOrdered DESC;"
+    },
+    {
+      "question": "List all nations that have more than 5 suppliers, and show the count of suppliers for each of these nations.",
+      "sql": "SELECT T2.N_NAME, COUNT(T1.S_SUPPKEY) AS NumberOfSuppliers FROM `bigframes-dev-perf.tpch_0001g.SUPPLIER` AS T1 INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T2 ON T1.S_NATIONKEY = T2.N_NATIONKEY GROUP BY T2.N_NAME HAVING COUNT(T1.S_SUPPKEY) > 5 ORDER BY NumberOfSuppliers DESC;"
+    }
+  ]
+}

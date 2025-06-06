@@ -54,9 +54,9 @@ SAFETY_FILTER_CONFIG = {
 
 
 
-def gen_prompt():
+def semantic_gen_prompt(table_info):
     prompt = """
-You are an expert data architect and business analyst specializing in Google Cloud and BigQuery. Your primary goal is to translate a technical BigQuery schema into a conceptual semantic layer that is intuitive and meaningful for business users.
+You are an expert data architect and business analyst specializing in Google Cloud and BigQuery. Your primary goal is to translate a technical BigQuery schema into a conceptual **semantic view**. This **semantic view** is a high-level abstraction designed to bridge the gap between raw database tables and final business analysis.
 
 The input you will receive is a JSON object representing a BigQuery dataset schema. This JSON contains an array of objects, where each object defines a BigQuery table and includes:
 
@@ -65,30 +65,26 @@ The input you will receive is a JSON object representing a BigQuery dataset sche
 * `table_id`: The name of the table.
 * `num_rows`: The total number of rows of the table.
 * `description`: Optional table description.
-* `schema`: An array of objects, where each object defines a column with its `name` and `type` (e.g., "INTEGER", "STRING").
+* `schema`: An array of objects, where each object defines a column with its `name` and `type`.
 
-**Your most important task is to carefully analyze the schema to understand its underlying business meaning.** Use the column names, table names, and optional `description` and `num_rows` fields as clues. For example, tables with a large number of rows and key columns referencing other tables are likely "fact" tables (containing events or transactions), while smaller tables are often "dimension" tables (containing descriptive attributes). Abstract away the raw schema into meaningful business concepts.
+**Your most important task is to carefully analyze the schema to understand its underlying business meaning.** Use the column names, table names, `num_rows` and optional `description` fields as clues to identify fact and dimension tables. The goal is to abstract the raw schema into meaningful business concepts that have a clear and direct mapping to SQL operations.
 
-Based on your business-centric analysis, generate a single JSON object that represents the semantic layer. The JSON output should contain the following top-level keys:
+Based on your analysis, generate a single JSON object that represents the **semantic view**. The JSON output should contain the following top-level keys:
 
 * **`tables`**: An array of objects representing the tables, including their `name` and inferred `primary_key`.
-* **`relationships`**: An array defining the logical joins between tables, with `from_table`, `from_column`, `to_table`, and `to_column` keys.
-* **`dimensions`**: An array of business-friendly dimensions. The `name` for each dimension should be a clean, user-friendly business term (e.g., "Supplier Name" instead of `S_NAME`). Each object should contain a `name` and a fully qualified `column`.
-* **`metrics`**: An array of key business metrics. The `name` should clearly state the business question the metric answers (e.g., "Total Account Balance"). The `sql` should represent a common and logical business calculation based on the column's meaning. Each object should have:
+* **`relationships`**: An array defining the logical connections between tables. **This defines the default join paths between tables, specifying how they should be linked in a SQL `JOIN` clause.** Each object should contain `from_table`, `from_column`, `to_table`, and `to_column` keys.
+* **`dimensions`**: An array of business-friendly attributes. **These represent the categorical data you would typically use in a SQL `GROUP BY` clause.** The `name` should be a clean, user-friendly alias for the grouping column. Each object should contain a `name` and a fully qualified `column`.
+* **`metrics`**: An array of key business calculations. **These are the quantitative values, containing the SQL aggregation or scalar functions you would use in a `SELECT` statement.** Each object should have:
     * `name`: A user-friendly name for the metric.
-    * `sql`: The complete SQL expression to calculate the metric (e.g., `SUM(table.column)`).
+    * `sql`: The complete SQL expression to calculate the metric (e.g., `SUM(table.column)`, `COUNT(DISTINCT table.column)`).
 
-### Example of Expected JSON Output for a BigQuery Semantic Layer:
+### Example of Expected JSON Output for a BigQuery Semantic View:
 
-For a BigQuery schema containing `SUPPLIER`, `NATION`, and `REGION` tables, your generated JSON should reflect this business-friendly approach:
+For a BigQuery schema containing `SUPPLIER` and `NATION` tables (and potentially `REGION`), your generated JSON should reflect this business-friendly, SQL-aligned approach:
 
 ```json
 {
   "tables": [
-    {
-      "name": "REGION",
-      "primary_key": "R_REGIONKEY"
-    },
     {
       "name": "NATION",
       "primary_key": "N_NATIONKEY"
@@ -104,22 +100,12 @@ For a BigQuery schema containing `SUPPLIER`, `NATION`, and `REGION` tables, your
       "from_column": "S_NATIONKEY",
       "to_table": "NATION",
       "to_column": "N_NATIONKEY"
-    },
-    {
-      "from_table": "NATION",
-      "from_column": "N_REGIONKEY",
-      "to_table": "REGION",
-      "to_column": "R_REGIONKEY"
     }
   ],
   "dimensions": [
     {
       "name": "Supplier Name",
       "column": "SUPPLIER.S_NAME"
-    },
-    {
-      "name": "Supplier Address",
-      "column": "SUPPLIER.S_ADDRESS"
     },
     {
       "name": "Nation",
@@ -140,10 +126,6 @@ For a BigQuery schema containing `SUPPLIER`, `NATION`, and `REGION` tables, your
       "sql": "AVG(SUPPLIER.S_ACCTBAL)"
     },
     {
-      "name": "Total Account Balance",
-      "sql": "SUM(SUPPLIER.S_ACCTBAL)"
-    },
-    {
       "name": "Balance With 5% Tax",
       "sql": "SUM(SUPPLIER.S_ACCTBAL * 1.05)"
     }
@@ -151,7 +133,8 @@ For a BigQuery schema containing `SUPPLIER`, `NATION`, and `REGION` tables, your
 }
 ```
     """
-    return prompt
+
+    return f"{prompt}\n\n--------- The BigQuery schemas of the available datasets and their tables. ---------\n{table_info}"
 
 def sql_gen_prompt(struct, project, dataset):
     prompt = f"""
@@ -249,19 +232,18 @@ def gen_table_info():
 
 
 def gen_semantic_view():
-    instruction = gen_prompt()
     table_info = gen_table_info()
-    prompt = f"{instruction}\n\n--------- The BigQuery schemas of the available datasets and their tables. ---------\n{table_info}"
-
     print("Starting to call LLM...")
     response = model.generate_content(
-        prompt,
+        semantic_gen_prompt(table_info),
         generation_config=GenerationConfig(
             temperature=0.01,
         ),
         safety_settings=SAFETY_FILTER_CONFIG,
     ).text
     print(response)
+    print("Starting to call LLM for SQL")
+  
     sql_response = model.generate_content(
         sql_gen_prompt(response, project=BQ_PROJECT_ID, dataset=BQ_DATASET_IDS.split(",")[0]),
         generation_config=GenerationConfig(
@@ -271,8 +253,9 @@ def gen_semantic_view():
     ).text
     print(sql_response)
 
+    print("Starting to verify SQL")
     final_view = validate_and_inject_examples(sql_response, response)
-    output_filename = "final_schema.json"
+    output_filename = Path(__file__).parent / "output/v2_long_prompt_w_sql.json"
     with open(output_filename, 'w', encoding='utf-8') as f:
         json.dump(final_view, f, ensure_ascii=False, indent=2)
 
