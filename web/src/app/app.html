@@ -25,7 +25,7 @@
       <mat-tab label="Agent Response">
         <div class="agent-response">
           @if (response && !loading) {
-            <p>{{ response }}</p>
+            <markdown [data]="response"></markdown>
           }
         </div>
       </mat-tab>

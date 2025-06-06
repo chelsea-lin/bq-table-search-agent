@@ -56,7 +56,8 @@ ng --version
 2. **Install NPM dependencies**
 
 ```
-npm install @swimlane/ngx-graph --save
+cd web
+npm install ngx-markdown marked
 ```
 
 

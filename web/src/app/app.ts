@@ -9,6 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
 
 import { Agent } from './agent'
 import { SemanticSchema } from './data_models/semantic_schema';
@@ -31,6 +32,10 @@ import { provideSemanticSchema } from './data_models/dummy_data';
     MatTabsModule,
     SchemaViewer,
     RelationshipGraph,
+    MarkdownModule,
+  ],
+  providers: [
+    provideMarkdown()
   ],
   styleUrl: './app.css'
 })
