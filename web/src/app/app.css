@@ -1,32 +1,48 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.prompt-section {
   padding: 24px;
-  gap: 16px; /* Adds space between elements */
-  max-width: 700px;
-  margin: 40px auto;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-bottom: 1px solid #ccc;
+}
+
+.content-section {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.response-section {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  border-right: 1px solid #ccc;
+}
+
+.schema-section {
+  width: 50%;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #fafafa;
 }
 
 .prompt-input {
   width: 100%;
+  margin-top: 24px;
 }
 
-button {
-  width: 200px;
-  height: 48px;
-  font-size: 16px;
-}
-
-.progress-bar {
-  width: 100%;
+.main-toolbar {
+  font-size: 24px;
 }
 
 .response-card {
-  width: 100%;
+  margin-bottom: 16px;
+}
+
+.progress-bar {
   margin-top: 16px;
-  background-color: #f9f9f9;
 }
