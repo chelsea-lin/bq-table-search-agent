@@ -45,13 +45,23 @@ export class SchemaViewer {
 
   onTableDataChange() {
     if (this.schema) {
-      this.schemaChange.emit(this.schema);
+      // Create a new schema object to ensure change detection
+      this.schemaChange.emit({...this.schema});
     }
   }
 
   deleteRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics' | 'exampleSqls', index: number) {
     if (this.schema) {
-      this.schema[type].splice(index, 1);
+      // Create a new array to ensure change detection
+      const newArray = [...this.schema[type]];
+      newArray.splice(index, 1);
+      
+      // Create a new schema object with the updated array
+      this.schema = {
+        ...this.schema,
+        [type]: newArray
+      };
+      
       this.onTableDataChange();
     }
   }
@@ -59,7 +69,11 @@ export class SchemaViewer {
   addRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics' | 'exampleSqls') {
     if (this.schema) {
       const newRow = this.createEmptyRow(type);
-      this.schema[type].push(newRow);
+      // Create a new array to ensure change detection
+      this.schema = {
+        ...this.schema,
+        [type]: [...this.schema[type], newRow]
+      };
       this.onTableDataChange();
     }
   }

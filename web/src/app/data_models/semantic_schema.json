@@ -280,5 +280,11 @@
       "name": "Average Supply Cost from Suppliers",
       "sql": "AVG(PARTSUPP.PS_SUPPLYCOST)"
     }
+  ],
+  "exampleSqls": [
+    {
+      "question": "How many customers are there?",
+      "sql": "SELECT COUNT(*) FROM CUSTOMER"
+    }
   ]
 }

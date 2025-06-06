@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AgentResponse } from './data_models/agent_response';
-import { SemanticSchema } from './data_models/semantic_schema';
 
 
 const AGENT_NAME = "table_search"

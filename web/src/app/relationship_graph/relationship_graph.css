@@ -1,0 +1,41 @@
+.graph-container {
+  width: 100%;
+  height: 100vh;
+  min-height: 400px;
+  display: block;
+  position: relative;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.nodes circle {
+  transition: all 0.3s ease;
+}
+
+.nodes circle:hover {
+  fill: #f0f0f0;
+  cursor: pointer;
+}
+
+.relationships line {
+  transition: stroke-width 0.3s ease;
+}
+
+.relationships line:hover {
+  stroke-width: 2;
+  cursor: pointer;
+}
+
+.relationships text {
+  background-color: white;
+  pointer-events: none;
+}
+
+.relationships text tspan {
+  background: white;
+  padding: 2px;
+}

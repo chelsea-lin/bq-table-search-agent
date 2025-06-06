@@ -6,7 +6,8 @@
 }
 
 .prompt-section {
-  padding: 24px;
+  padding: 20px;
+  flex-shrink: 0;
 }
 
 .content-section {
@@ -22,7 +23,8 @@
 }
 
 .tab-content {
-  overflow-y: auto;
+  height: 100%;
+  overflow: auto;
 }
 
 .prompt-input {
@@ -31,6 +33,7 @@
 }
 
 .main-toolbar {
+  margin-bottom: 20px;
   font-size: 24px;
 }
 
@@ -39,5 +42,15 @@
 }
 
 .progress-bar {
-  margin-top: 16px;
+  margin-top: 10px;
+}
+
+.agent-response {
+  padding: 20px;
+  white-space: pre-wrap;
+}
+
+.graph-container {
+  height: 100%;
+  width: 100%;
 }

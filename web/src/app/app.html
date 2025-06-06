@@ -35,6 +35,11 @@
           <app-schema-viewer [(schema)]="semanticSchema"></app-schema-viewer>
         </div>
       </mat-tab>
+
+      <mat-tab label="Relationship Graph">
+        
+          <app-relationship-graph [schema]="semanticSchema"></app-relationship-graph>
+      </mat-tab>
     </mat-tab-group>
   </div>
 </div>
