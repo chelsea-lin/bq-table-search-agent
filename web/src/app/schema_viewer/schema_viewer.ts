@@ -1,14 +1,15 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SemanticSchema, Table, Relationship, Dimension, Metric } from '../data_models/semantic_schema';
-import { MatTabsModule } from '@angular/material/tabs';
+import { SemanticSchema, Table, Relationship, Dimension, Metric, ExampleSql, createSemanticSchema } from '../data_models/semantic_schema';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-schema-viewer',
@@ -16,19 +17,20 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule,
     FormsModule,
-    MatTabsModule,
+    MatExpansionModule,
     MatListModule,
     MatTableModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ],
   templateUrl: './schema_viewer.html',
   styleUrl: './schema_viewer.css'
 })
 export class SchemaViewer {
-  @Input() schema!: SemanticSchema;
+  @Input() schema: SemanticSchema | null = null;
   @Output() schemaChange = new EventEmitter<SemanticSchema>();
   
   // Column definitions for each table
@@ -36,24 +38,33 @@ export class SchemaViewer {
   relationshipColumns: string[] = ['from_table', 'from_column', 'to_table', 'to_column', 'actions'];
   dimensionColumns: string[] = ['name', 'column', 'actions'];
   metricColumns: string[] = ['name', 'sql', 'actions'];
+  exampleSqlColumns: string[] = ['name', 'sql', 'actions'];
+
+  // Track expansion state
+  expandedPanels = new Set<string>(['tables']); // Default to having tables expanded
 
   onTableDataChange() {
-    // Emit the updated schema
-    this.schemaChange.emit({ ...this.schema });
+    if (this.schema) {
+      this.schemaChange.emit(this.schema);
+    }
   }
 
-  deleteRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics', index: number) {
-    this.schema[type].splice(index, 1);
-    this.onTableDataChange();
+  deleteRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics' | 'exampleSqls', index: number) {
+    if (this.schema) {
+      this.schema[type].splice(index, 1);
+      this.onTableDataChange();
+    }
   }
 
-  addRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics') {
-    const newRow = this.createEmptyRow(type);
-    this.schema[type].push(newRow);
-    this.onTableDataChange();
+  addRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics' | 'exampleSqls') {
+    if (this.schema) {
+      const newRow = this.createEmptyRow(type);
+      this.schema[type].push(newRow);
+      this.onTableDataChange();
+    }
   }
 
-  private createEmptyRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics'): any {
+  private createEmptyRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics' | 'exampleSqls'): any {
     switch (type) {
       case 'tables':
         return { name: '', primary_key: '' };
@@ -63,6 +74,44 @@ export class SchemaViewer {
         return { name: '', column: '' };
       case 'metrics':
         return { name: '', sql: '' };
+      case 'exampleSqls':
+        return { name: '', sql: '' };
+    }
+  }
+
+  togglePanel(panel: string) {
+    if (this.expandedPanels.has(panel)) {
+      this.expandedPanels.delete(panel);
+    } else {
+      this.expandedPanels.add(panel);
+    }
+  }
+
+  isPanelExpanded(panel: string): boolean {
+    return this.expandedPanels.has(panel);
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        try {
+          const jsonString = e.target?.result as string;
+          if (jsonString) {
+            const newSchema = createSemanticSchema(jsonString);
+            this.schema = newSchema;
+            this.schemaChange.emit(newSchema);
+          }
+        } catch (error) {
+          console.error('Error parsing schema file:', error);
+          // You might want to show an error message to the user here
+        }
+      };
+      
+      reader.readAsText(file);
     }
   }
 } 

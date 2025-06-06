@@ -20,11 +20,17 @@ export interface Metric {
   sql: string;
 }
 
+export interface ExampleSql {
+  question: string;
+  sql: string;
+}
+
 export interface SemanticSchema {
   tables: Table[];
   relationships: Relationship[];
   dimensions: Dimension[];
   metrics: Metric[];
+  exampleSqls: ExampleSql[];
 }
 
 export function createSemanticSchema(jsonString: string): SemanticSchema {
@@ -56,6 +62,7 @@ export function createSemanticSchema(jsonString: string): SemanticSchema {
       column: d.column,
     })),
     metrics: data.metrics.map((m: any) => ({name: m.name, sql: m.sql})),
+    exampleSqls: data.example_sqls.map((e: any) => ({question: e.question, sql: e.sql})),
   };
 }
 
