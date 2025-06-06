@@ -1,15 +1,18 @@
 import { Component, inject } from '@angular/core';
-import { Agent } from './agent'
 import { CommonModule } from '@angular/common';
-import { AgentResponse } from './agent_response.model';
+import { AgentResponse } from './data_models/agent_response';
 import { FormsModule } from '@angular/forms';
-
-// Import all the required Angular Material modules
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+
+import { Agent } from './agent'
+import { provideSemanticSchema } from './data_models/dummy_data';
+import { SemanticSchema } from './data_models/semantic_schema';
+import { SchemaViewer } from './schema_viewer/schema_viewer';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +25,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatButtonModule,
     MatCardModule,
     MatProgressBarModule,
+    MatToolbarModule,
+    SchemaViewer
   ],
   styleUrl: './app.css'
 })
@@ -34,17 +39,30 @@ export class App {
   response: string = "";
   loading: boolean = false;
 
-  ngOnInit() {
-    this.agent.startSession();
+  private _semanticSchema = provideSemanticSchema();
+  
+  get semanticSchema(): SemanticSchema {
+    return this._semanticSchema;
   }
 
-  onClick() {
+  set semanticSchema(value: SemanticSchema) {
+    this._semanticSchema = value;
+    console.log('Schema updated:', this._semanticSchema);
+  }
+
+  ngOnInit() {
+    this.agent.startSession();
+    this.semanticSchema = provideSemanticSchema();
+  }
+
+  sendPrompt() {
     this.loading = true;
     this.response = '';
     console.log('Fetching response for:', this.userPrompt);
 
     this.agent.query(this.userPrompt).subscribe({
-      next: resp => this.handleResponse(resp)
+      next: resp => this.handleResponse(resp),
+      error: error => this.handleError(error),
     });
   }
 
@@ -52,6 +70,11 @@ export class App {
     console.log("Get response", response);
     const textResponse = this.getTextResponse(response);
     this.response = textResponse;
+    this.loading = false;
+  }
+
+  private handleError(error: any) {
+    console.error("Error", error);
     this.loading = false;
   }
 

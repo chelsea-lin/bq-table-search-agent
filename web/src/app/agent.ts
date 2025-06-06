@@ -1,7 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { AgentResponse } from './agent_response.model';
+import { Observable, of } from 'rxjs';
+import { AgentResponse } from './data_models/agent_response';
+import { SemanticSchema } from './data_models/semantic_schema';
+import { provideSemanticSchema } from './data_models/dummy_data';
 
 
 const AGENT_NAME = "table_search"
@@ -49,5 +51,9 @@ export class Agent {
     }
 
     return this.httpClient.post<AgentResponse>(url, body, HTTP_OPTIONS)
+  }
+
+  getSemanticSchema(): Observable<SemanticSchema> {
+    return of(provideSemanticSchema());
   }
 }

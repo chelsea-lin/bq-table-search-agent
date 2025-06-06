@@ -1,0 +1,151 @@
+@if (schema) {
+  <mat-tab-group>
+    <mat-tab label="Tables">
+      <table mat-table [dataSource]="schema.tables" class="mat-elevation-z8">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Table Name</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.name" 
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="Table name">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Primary Key Column -->
+        <ng-container matColumnDef="primary_key">
+          <th mat-header-cell *matHeaderCellDef>Primary Key</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.primary_key"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="Primary key">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
+      </table>
+    </mat-tab>
+
+    <mat-tab label="Relationships">
+      <table mat-table [dataSource]="schema.relationships" class="mat-elevation-z8">
+        <!-- From Table Column -->
+        <ng-container matColumnDef="from_table">
+          <th mat-header-cell *matHeaderCellDef>From Table</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.from_table"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="From table">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- From Column -->
+        <ng-container matColumnDef="from_column">
+          <th mat-header-cell *matHeaderCellDef>From Column</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.from_column"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="From column">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- To Table Column -->
+        <ng-container matColumnDef="to_table">
+          <th mat-header-cell *matHeaderCellDef>To Table</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.to_table"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="To table">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- To Column -->
+        <ng-container matColumnDef="to_column">
+          <th mat-header-cell *matHeaderCellDef>To Column</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.to_column"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="To column">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="relationshipColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: relationshipColumns;"></tr>
+      </table>
+    </mat-tab>
+
+    <mat-tab label="Dimensions">
+      <table mat-table [dataSource]="schema.dimensions" class="mat-elevation-z8">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.name"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="Dimension name">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- Column -->
+        <ng-container matColumnDef="column">
+          <th mat-header-cell *matHeaderCellDef>Column</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.column"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="Column">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="dimensionColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: dimensionColumns;"></tr>
+      </table>
+    </mat-tab>
+
+    <mat-tab label="Metrics">
+      <table mat-table [dataSource]="schema.metrics" class="mat-elevation-z8">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.name"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="Metric name">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <!-- SQL Column -->
+        <ng-container matColumnDef="sql">
+          <th mat-header-cell *matHeaderCellDef>SQL</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <input matInput [(ngModel)]="element.sql"
+                     (ngModelChange)="onTableDataChange()"
+                     placeholder="SQL">
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="metricColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: metricColumns;"></tr>
+      </table>
+    </mat-tab>
+  </mat-tab-group>
+} 
