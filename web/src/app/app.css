@@ -6,14 +6,15 @@
 }
 
 .prompt-section {
-  padding: 24px;
+  padding: 16px;
+  background-color: #fff;
+  flex-shrink: 0;
 }
 
 .content-section {
   flex: 1;
   display: flex;
   flex-direction: column;
-  /* overflow: hidden; */
   padding: 24px;
 }
 
@@ -22,15 +23,18 @@
 }
 
 .tab-content {
-  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
 }
 
 .prompt-input {
   width: 100%;
-  margin-top: 24px;
 }
 
 .main-toolbar {
+  margin-bottom: 16px;
   font-size: 24px;
 }
 
@@ -39,5 +43,29 @@
 }
 
 .progress-bar {
-  margin-top: 16px;
+  margin-top: 8px;
+}
+
+.agent-response {
+  padding: 16px;
+  white-space: pre-wrap;
+}
+
+.graph-container {
+  height: 100%;
+  width: 100%;
+}
+
+.schema-section {
+  flex: 1;
+  width: 50%;
+  overflow: auto;
+  padding: 16px;
+  border-right: 1px solid #ddd;
+}
+
+.graph-display {
+  flex: 1;
+  width: 50%;
+  overflow: hidden;
 }

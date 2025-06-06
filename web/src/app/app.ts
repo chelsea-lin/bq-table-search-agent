@@ -13,6 +13,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { Agent } from './agent'
 import { SemanticSchema } from './data_models/semantic_schema';
 import { SchemaViewer } from './schema_viewer/schema_viewer';
+import { RelationshipGraph } from './relationship_graph/relationship_graph';
+import { provideSemanticSchema } from './data_models/dummy_data';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +29,8 @@ import { SchemaViewer } from './schema_viewer/schema_viewer';
     MatProgressBarModule,
     MatToolbarModule,
     MatTabsModule,
-    SchemaViewer
+    SchemaViewer,
+    RelationshipGraph,
   ],
   styleUrl: './app.css'
 })
@@ -48,7 +51,6 @@ export class App {
 
   set semanticSchema(value: SemanticSchema) {
     this._semanticSchema = value;
-    console.log('Schema updated:', this._semanticSchema);
   }
 
   ngOnInit() {

@@ -1,0 +1,59 @@
+<div class="graph-container">
+  <svg #svg width="100%" height="100%">
+    <defs>
+      <marker
+        id="arrowhead"
+        markerWidth="10"
+        markerHeight="7"
+        refX="9"
+        refY="3.5"
+        orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#999"/>
+      </marker>
+    </defs>
+    <g [attr.transform]="'translate(' + width/2 + ',' + height/2 + ')'">
+      <!-- Relationships -->
+      <g class="relationships">
+        <g *ngFor="let rel of relationships">
+          <!-- Relationship line -->
+          <line
+            [attr.x1]="rel.from.x"
+            [attr.y1]="rel.from.y"
+            [attr.x2]="rel.to.x"
+            [attr.y2]="rel.to.y"
+            stroke="#999"
+            stroke-width="2"
+            marker-end="url(#arrowhead)"/>
+          <!-- Relationship label -->
+          <text
+            [attr.x]="(rel.from.x + rel.to.x) / 2"
+            [attr.y]="(rel.from.y + rel.to.y) / 2"
+            text-anchor="middle"
+            dominant-baseline="middle"
+            fill="#666"
+            font-size="12px">
+            <tspan dy="-0.6em">{{rel.fromColumn}}</tspan>
+            <tspan [attr.x]="(rel.from.x + rel.to.x) / 2" dy="1.2em">{{rel.toColumn}}</tspan>
+          </text>
+        </g>
+      </g>
+      <!-- Nodes -->
+      <g class="nodes">
+        <g *ngFor="let node of nodes" [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+          <circle
+            r="50"
+            fill="white"
+            stroke="#666"
+            stroke-width="2"/>
+          <text
+            text-anchor="middle"
+            dominant-baseline="middle"
+            fill="black"
+            font-size="12px">
+            {{node.name}}
+          </text>
+        </g>
+      </g>
+    </g>
+  </svg>
+</div>

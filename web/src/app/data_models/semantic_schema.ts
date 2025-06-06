@@ -41,7 +41,8 @@ export function createSemanticSchema(jsonString: string): SemanticSchema {
     !Array.isArray(data.tables) ||
     !Array.isArray(data.relationships) ||
     !Array.isArray(data.dimensions) ||
-    !Array.isArray(data.metrics)
+    !Array.isArray(data.metrics) ||
+    !Array.isArray(data.example_sqls)
   ) {
     throw new Error('Invalid SemanticSchema JSON string');
   }

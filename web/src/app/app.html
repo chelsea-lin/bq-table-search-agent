@@ -32,7 +32,12 @@
 
       <mat-tab label="Schema Editor">
         <div class="tab-content">
-          <app-schema-viewer [(schema)]="semanticSchema"></app-schema-viewer>
+          <div class="schema-section">
+            <app-schema-viewer [(schema)]="semanticSchema"></app-schema-viewer>
+          </div>
+          <div class="graph-display">
+            <app-relationship-graph [schema]="semanticSchema"></app-relationship-graph>
+          </div>
         </div>
       </mat-tab>
     </mat-tab-group>

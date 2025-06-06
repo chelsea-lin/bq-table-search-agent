@@ -53,8 +53,15 @@ If the installation is successful, you should be able to run this command
 ng --version
 ```
 
+2. **Install NPM dependencies**
 
-2. **Start ADK API Server**
+```
+npm install @swimlane/ngx-graph --save
+```
+
+
+3. **Start ADK API Server**
+
 Under the root directory
 ```bash
 adk api_server
@@ -62,7 +69,8 @@ adk api_server
 More details at https://google.github.io/adk-docs/get-started/testing/
 
 
-3. **Start Web Server**
+4. **Start Web Server**
+
 Navigate to the `web` directory:
 ```bash
 cd web
