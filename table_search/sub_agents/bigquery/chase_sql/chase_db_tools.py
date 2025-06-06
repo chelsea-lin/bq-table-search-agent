@@ -93,24 +93,33 @@ def initial_bq_nl2sql(
       str: An SQL statement to answer this question.
     """
     print("****** Running agent with ChaseSQL algorithm.")
-    ddl_schema = tool_context.state["database_settings"]["bq_ddl_schema"]
-    project = tool_context.state["database_settings"]["bq_project_id"]
-    db = tool_context.state["database_settings"]["bq_dataset_id"]
-    transpile_to_bigquery = tool_context.state["database_settings"][
+    project = tool_context.state["project_settings"]["bq_project_id"]
+    dataset_settings = tool_context.state["project_settings"]["dataset_settings"]
+
+    schema_prompt_parts = []
+
+    if dataset_settings:
+        schema_prompt_parts.append("\n--------- The BigQuery schemas of the available datasets and their tables. ---------")
+        for dataset_id, schema_content in dataset_settings.items():
+            ddl_schema = schema_content
+            db = dataset_id
+            break
+
+    transpile_to_bigquery = tool_context.state["project_settings"][
         "transpile_to_bigquery"
     ]
-    process_input_errors = tool_context.state["database_settings"][
+    process_input_errors = tool_context.state["project_settings"][
         "process_input_errors"
     ]
-    process_tool_output_errors = tool_context.state["database_settings"][
+    process_tool_output_errors = tool_context.state["project_settings"][
         "process_tool_output_errors"
     ]
-    number_of_candidates = tool_context.state["database_settings"][
+    number_of_candidates = tool_context.state["project_settings"][
         "number_of_candidates"
     ]
-    model = tool_context.state["database_settings"]["model"]
-    temperature = tool_context.state["database_settings"]["temperature"]
-    generate_sql_type = tool_context.state["database_settings"]["generate_sql_type"]
+    model = tool_context.state["project_settings"]["model"]
+    temperature = tool_context.state["project_settings"]["temperature"]
+    generate_sql_type = tool_context.state["project_settings"]["generate_sql_type"]
 
     if generate_sql_type == GenerateSQLType.DC.value:
         prompt = DC_PROMPT_TEMPLATE.format(
