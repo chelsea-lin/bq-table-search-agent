@@ -58,7 +58,6 @@ def setup_before_agent_call(callback_context: CallbackContext):
 
     """
         )
-        print(f"DEBUG: {callback_context._invocation_context.agent.instruction}")
 
 
 root_agent = Agent(
@@ -67,10 +66,8 @@ root_agent = Agent(
     instruction=return_instructions_root(),
     global_instruction=(
         f"""
-        You are a BigQuery AI expert, acting as an intelligent bridge to a complex database.
-        Your mission is to understand a user's natural language request and help them discover the exact data they need.
-        Your capabilities include: finding relevant datasets, identifying specific tables, and clarifying schema information.
-        Today's date is {date_today}.
+        You are a Data Science and Data Analytics Multi Agent System.
+        Todays date: {date_today}
         """
     ),
     tools=[
