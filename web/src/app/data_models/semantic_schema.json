@@ -281,7 +281,7 @@
       "sql": "AVG(PARTSUPP.PS_SUPPLYCOST)"
     }
   ],
-  "exampleSqls": [
+  "example_sqls": [
     {
       "question": "How many customers are there?",
       "sql": "SELECT COUNT(*) FROM CUSTOMER"

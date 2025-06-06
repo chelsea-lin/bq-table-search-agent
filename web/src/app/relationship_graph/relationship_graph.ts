@@ -35,8 +35,8 @@ export class RelationshipGraph implements OnInit, OnChanges {
   height = 600;
   nodes: Node[] = [];
   relationships: Relationship[] = [];
-  private nodeRadius = 30;
-  private nodeSpacing = 150;
+  private nodeRadius = 50;
+  private nodeSpacing = 200;
 
   ngOnInit() {
     this.setupSvg();
@@ -73,7 +73,7 @@ export class RelationshipGraph implements OnInit, OnChanges {
     if (!this.schema) return;
 
     const tables = this.schema.tables;
-    const radius = Math.min(this.width, this.height) / 3;
+    const radius = Math.min(this.width, this.height) * 0.4; // Increase to 40% of the smaller dimension
 
     // Update nodes
     this.nodes = tables.map((table, index) => {

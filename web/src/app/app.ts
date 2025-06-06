@@ -43,7 +43,7 @@ export class App {
   response: string = "";
   loading: boolean = false;
 
-  private _semanticSchema: SemanticSchema | null = provideSemanticSchema();
+  private _semanticSchema: SemanticSchema | null = null;
   
   get semanticSchema(): SemanticSchema | null {
     return this._semanticSchema;
