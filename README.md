@@ -1,8 +1,8 @@
-# BigQuery Table Search Agent
+# Empowering Data Analytics Agents with BigQuery Semantic Views
 
 ## Overview
 
-This project addresses a critical challenge in data analytics: finding the right data. The BQ Table Search Agent automatically enriches BigQuery tables with a rich semantic layer, describing not just the schema but the business meaning of the data. This automated metadata generation unlocks two powerful capabilities: an intuitive, concept-based search for tables and a significant boost in the accuracy of NL2SQL tools, enabling analysts to get to deeper insights, faster.
+This project will develop and showcase a framework for empowering autonomous data analytics agents with Google BigQuery semantic views. This initiative will demonstrate how the combination of a well-defined semantic layer with intelligent agents can revolutionize data analysis by making it more accessible, efficient, and reliable for business users.
 
 ## Setup and Installation
 
@@ -19,14 +19,13 @@ pip install -e .[all]
 cp .env-example .env
 ```
 
-
-Run agent with ADK Web UI:
+3. **Generate semantic view**
 
 ```bash
-adk web
+python table_search/utils/semantic_view.py
 ```
 
-3. **Run Agents**
+4. **Run Agents**
 
 Run agent in CLI:
 
