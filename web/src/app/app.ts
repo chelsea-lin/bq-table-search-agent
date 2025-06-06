@@ -8,9 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { Agent } from './agent'
-import { provideSemanticSchema } from './data_models/dummy_data';
 import { SemanticSchema } from './data_models/semantic_schema';
 import { SchemaViewer } from './schema_viewer/schema_viewer';
 
@@ -26,6 +26,7 @@ import { SchemaViewer } from './schema_viewer/schema_viewer';
     MatCardModule,
     MatProgressBarModule,
     MatToolbarModule,
+    MatTabsModule,
     SchemaViewer
   ],
   styleUrl: './app.css'
@@ -39,9 +40,9 @@ export class App {
   response: string = "";
   loading: boolean = false;
 
-  private _semanticSchema = provideSemanticSchema();
+  private _semanticSchema: SemanticSchema | null = null;
   
-  get semanticSchema(): SemanticSchema {
+  get semanticSchema(): SemanticSchema | null {
     return this._semanticSchema;
   }
 
@@ -52,7 +53,6 @@ export class App {
 
   ngOnInit() {
     this.agent.startSession();
-    this.semanticSchema = provideSemanticSchema();
   }
 
   sendPrompt() {
@@ -60,7 +60,13 @@ export class App {
     this.response = '';
     console.log('Fetching response for:', this.userPrompt);
 
-    this.agent.query(this.userPrompt).subscribe({
+    const prompt = `
+    Answer the user's question based on the semantic schema. 
+    User instruction: ${this.userPrompt}. 
+    Semantic schema: ${JSON.stringify(this.semanticSchema)}
+    `
+
+    this.agent.query(prompt).subscribe({
       next: resp => this.handleResponse(resp),
       error: error => this.handleError(error),
     });
