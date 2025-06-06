@@ -255,7 +255,7 @@ def gen_semantic_view():
 
     print("Starting to verify SQL")
     final_view = validate_and_inject_examples(sql_response, response)
-    output_filename = Path(__file__).parent / "output/v2_long_prompt_w_sql.json"
+    output_filename = Path(__file__).parent / "output" / "thelook_ecommerce" / "v2_prompt_w_sql.json"
     with open(output_filename, 'w', encoding='utf-8') as f:
         json.dump(final_view, f, ensure_ascii=False, indent=2)
 
