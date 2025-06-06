@@ -23,7 +23,7 @@ from table_search.utils.utils import get_env_var
 from google.adk.tools import ToolContext
 from google.cloud import bigquery
 from google.genai import Client
-from typing import List
+
 from .chase_sql import chase_constants
 
 # Assume that `BQ_PROJECT_ID` is set in the environment. See the
@@ -35,7 +35,7 @@ llm_client = Client(vertexai=True, project=project, location=location)
 MAX_NUM_ROWS = 80
 
 
-project_settings = None
+database_settings = None
 bq_client = None
 
 
@@ -47,39 +47,31 @@ def get_bq_client():
     return bq_client
 
 
-def get_project_settings():
-    """Get project settings."""
-    global project_settings
-    if project_settings is None:
-        project_settings = update_project_settings()
-    return project_settings
+def get_database_settings():
+    """Get database settings."""
+    global database_settings
+    if database_settings is None:
+        database_settings = update_database_settings()
+    return database_settings
 
 
-def update_project_settings():
-    """Update project settings."""
-    global project_settings
-    project = get_env_var("BQ_PROJECT_ID")
-    project_settings = {
-        "bq_project_id": project,
+def update_database_settings():
+    """Update database settings."""
+    global database_settings
+    ddl_schema = get_bigquery_schema(
+        get_env_var("BQ_DATASET_ID"),
+        client=get_bq_client(),
+        project_id=get_env_var("BQ_PROJECT_ID"),
+    )
+    database_settings = {
+        "bq_project_id": get_env_var("BQ_PROJECT_ID"),
+        "bq_dataset_id": get_env_var("BQ_DATASET_ID"),
+        "bq_ddl_schema": ddl_schema,
         # Include ChaseSQL-specific constants.
         **chase_constants.chase_sql_constants_dict,
     }
-    client = bigquery.Client(project=project)
+    return database_settings
 
-    dataset_ids_str = get_env_var("BQ_DATASET_IDS")
-
-    if dataset_ids_str:
-        datasets = [item.strip() for item in dataset_ids_str.split(',')]
-    else:
-        all_project_datasets = client.list_datasets()
-        datasets = [dataset.dataset_id for dataset in all_project_datasets]
-
-    dataset_settings = {}
-    for dataset_id in datasets:
-        dataset_settings[dataset_id] = get_bigquery_schema(dataset_id, client, project)
-    
-    project_settings["dataset_settings"] = dataset_settings
-    return project_settings
 
 def get_bigquery_schema(dataset_id, client=None, project_id=None):
     """Retrieves schema and generates DDL with example values for a BigQuery dataset.
@@ -190,22 +182,11 @@ The database structure is defined by the following table schemas (possibly with 
 **Think Step-by-Step:** Carefully consider the schema, question, guidelines, and best practices outlined above to generate the correct BigQuery SQL.
 
    """
-    
-    
-    dataset_settings = tool_context.state["project_settings"]["dataset_settings"]
 
-    schema_prompt_parts = []
-
-    if dataset_settings:
-        schema_prompt_parts.append("\n--------- The BigQuery schemas of the available datasets and their tables. ---------")
-        for dataset_id, schema_content in dataset_settings.items():
-            schema_prompt_parts.append(f"\n--- Schema for Dataset: `{dataset_id}` ---")
-            schema_prompt_parts.append(schema_content)
-    
-    full_schema_string = "\n".join(schema_prompt_parts)
+    ddl_schema = tool_context.state["database_settings"]["bq_ddl_schema"]
 
     prompt = prompt_template.format(
-        MAX_NUM_ROWS=MAX_NUM_ROWS, SCHEMA=full_schema_string, QUESTION=question
+        MAX_NUM_ROWS=MAX_NUM_ROWS, SCHEMA=ddl_schema, QUESTION=question
     )
 
     response = llm_client.models.generate_content(
