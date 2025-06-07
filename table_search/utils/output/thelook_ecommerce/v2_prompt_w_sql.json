@@ -1,282 +1,280 @@
 {
   "tables": [
     {
-      "name": "CUSTOMER",
-      "primary_key": "C_CUSTKEY"
+      "name": "distribution_centers",
+      "primary_key": "id"
     },
     {
-      "name": "LINEITEM",
-      "primary_key": "L_ORDERKEY, L_LINENUMBER"
+      "name": "events",
+      "primary_key": "id"
     },
     {
-      "name": "NATION",
-      "primary_key": "N_NATIONKEY"
+      "name": "inventory_items",
+      "primary_key": "id"
     },
     {
-      "name": "ORDERS",
-      "primary_key": "O_ORDERKEY"
+      "name": "order_items",
+      "primary_key": "id"
     },
     {
-      "name": "PART",
-      "primary_key": "P_PARTKEY"
+      "name": "orders",
+      "primary_key": "order_id"
     },
     {
-      "name": "PARTSUPP",
-      "primary_key": "PS_PARTKEY, PS_SUPPKEY"
+      "name": "products",
+      "primary_key": "id"
     },
     {
-      "name": "REGION",
-      "primary_key": "R_REGIONKEY"
-    },
-    {
-      "name": "SUPPLIER",
-      "primary_key": "S_SUPPKEY"
+      "name": "users",
+      "primary_key": "id"
     }
   ],
   "relationships": [
     {
-      "from_table": "CUSTOMER",
-      "from_column": "C_NATIONKEY",
-      "to_table": "NATION",
-      "to_column": "N_NATIONKEY"
+      "from_table": "order_items",
+      "from_column": "order_id",
+      "to_table": "orders",
+      "to_column": "order_id"
     },
     {
-      "from_table": "ORDERS",
-      "from_column": "O_CUSTKEY",
-      "to_table": "CUSTOMER",
-      "to_column": "C_CUSTKEY"
+      "from_table": "order_items",
+      "from_column": "user_id",
+      "to_table": "users",
+      "to_column": "id"
     },
     {
-      "from_table": "LINEITEM",
-      "from_column": "L_ORDERKEY",
-      "to_table": "ORDERS",
-      "to_column": "O_ORDERKEY"
+      "from_table": "order_items",
+      "from_column": "inventory_item_id",
+      "to_table": "inventory_items",
+      "to_column": "id"
     },
     {
-      "from_table": "LINEITEM",
-      "from_column": "L_PARTKEY",
-      "to_table": "PART",
-      "to_column": "P_PARTKEY"
+      "from_table": "inventory_items",
+      "from_column": "product_id",
+      "to_table": "products",
+      "to_column": "id"
     },
     {
-      "from_table": "LINEITEM",
-      "from_column": "L_SUPPKEY",
-      "to_table": "SUPPLIER",
-      "to_column": "S_SUPPKEY"
+      "from_table": "inventory_items",
+      "from_column": "product_distribution_center_id",
+      "to_table": "distribution_centers",
+      "to_column": "id"
     },
     {
-      "from_table": "PARTSUPP",
-      "from_column": "PS_PARTKEY",
-      "to_table": "PART",
-      "to_column": "P_PARTKEY"
+      "from_table": "events",
+      "from_column": "user_id",
+      "to_table": "users",
+      "to_column": "id"
     },
     {
-      "from_table": "PARTSUPP",
-      "from_column": "PS_SUPPKEY",
-      "to_table": "SUPPLIER",
-      "to_column": "S_SUPPKEY"
+      "from_table": "orders",
+      "from_column": "user_id",
+      "to_table": "users",
+      "to_column": "id"
     },
     {
-      "from_table": "SUPPLIER",
-      "from_column": "S_NATIONKEY",
-      "to_table": "NATION",
-      "to_column": "N_NATIONKEY"
-    },
-    {
-      "from_table": "NATION",
-      "from_column": "N_REGIONKEY",
-      "to_table": "REGION",
-      "to_column": "R_REGIONKEY"
+      "from_table": "products",
+      "from_column": "distribution_center_id",
+      "to_table": "distribution_centers",
+      "to_column": "id"
     }
   ],
   "dimensions": [
     {
-      "name": "Customer Name",
-      "column": "CUSTOMER.C_NAME"
+      "name": "User First Name",
+      "column": "users.first_name"
     },
     {
-      "name": "Customer Market Segment",
-      "column": "CUSTOMER.C_MKTSEGMENT"
+      "name": "User Last Name",
+      "column": "users.last_name"
     },
     {
-      "name": "Nation",
-      "column": "NATION.N_NAME"
+      "name": "User Gender",
+      "column": "users.gender"
     },
     {
-      "name": "Region",
-      "column": "REGION.R_NAME"
+      "name": "User Age",
+      "column": "users.age"
     },
     {
-      "name": "Line Item Return Flag",
-      "column": "LINEITEM.L_RETURNFLAG"
+      "name": "User State",
+      "column": "users.state"
     },
     {
-      "name": "Line Item Status",
-      "column": "LINEITEM.L_LINESTATUS"
+      "name": "User City",
+      "column": "users.city"
     },
     {
-      "name": "Line Item Ship Date",
-      "column": "LINEITEM.L_SHIPDATE"
+      "name": "User Country",
+      "column": "users.country"
     },
     {
-      "name": "Line Item Ship Mode",
-      "column": "LINEITEM.L_SHIPMODE"
+      "name": "User Traffic Source",
+      "column": "users.traffic_source"
+    },
+    {
+      "name": "User Creation Date",
+      "column": "CAST(users.created_at AS DATE)"
+    },
+    {
+      "name": "Product Name",
+      "column": "products.name"
+    },
+    {
+      "name": "Product Category",
+      "column": "products.category"
+    },
+    {
+      "name": "Product Brand",
+      "column": "products.brand"
+    },
+    {
+      "name": "Product Department",
+      "column": "products.department"
     },
     {
       "name": "Order Status",
-      "column": "ORDERS.O_ORDERSTATUS"
+      "column": "orders.status"
     },
     {
       "name": "Order Date",
-      "column": "ORDERS.O_ORDERDATE"
+      "column": "CAST(orders.created_at AS DATE)"
     },
     {
-      "name": "Order Priority",
-      "column": "ORDERS.O_ORDERPRIORITY"
+      "name": "Order Shipped Date",
+      "column": "CAST(orders.shipped_at AS DATE)"
     },
     {
-      "name": "Order Clerk",
-      "column": "ORDERS.O_CLERK"
+      "name": "Order Delivered Date",
+      "column": "CAST(orders.delivered_at AS DATE)"
     },
     {
-      "name": "Part Name",
-      "column": "PART.P_NAME"
+      "name": "Order Item Status",
+      "column": "order_items.status"
     },
     {
-      "name": "Part Manufacturer",
-      "column": "PART.P_MFGR"
+      "name": "Distribution Center Name",
+      "column": "distribution_centers.name"
     },
     {
-      "name": "Part Brand",
-      "column": "PART.P_BRAND"
+      "name": "Event Type",
+      "column": "events.event_type"
     },
     {
-      "name": "Part Type",
-      "column": "PART.P_TYPE"
+      "name": "Event Browser",
+      "column": "events.browser"
     },
     {
-      "name": "Part Size",
-      "column": "PART.P_SIZE"
+      "name": "Event URI",
+      "column": "events.uri"
     },
     {
-      "name": "Supplier Name",
-      "column": "SUPPLIER.S_NAME"
+      "name": "Event Date",
+      "column": "CAST(events.created_at AS DATE)"
+    },
+    {
+      "name": "Event Traffic Source",
+      "column": "events.traffic_source"
     }
   ],
   "metrics": [
     {
-      "name": "Total Customers",
-      "sql": "COUNT(DISTINCT CUSTOMER.C_CUSTKEY)"
+      "name": "Total Revenue",
+      "sql": "SUM(order_items.sale_price)"
     },
     {
-      "name": "Average Customer Account Balance",
-      "sql": "AVG(CUSTOMER.C_ACCTBAL)"
+      "name": "Number of Unique Orders",
+      "sql": "COUNT(DISTINCT orders.order_id)"
     },
     {
-      "name": "Total Line Item Quantity",
-      "sql": "SUM(LINEITEM.L_QUANTITY)"
+      "name": "Number of Line Items Sold",
+      "sql": "COUNT(order_items.id)"
     },
     {
-      "name": "Total Gross Revenue (Line Items)",
-      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE)"
+      "name": "Average Sale Price (per Line Item)",
+      "sql": "AVG(order_items.sale_price)"
     },
     {
-      "name": "Average Discount Percentage (Line Items)",
-      "sql": "AVG(LINEITEM.L_DISCOUNT)"
+      "name": "Total Registered Users",
+      "sql": "COUNT(DISTINCT users.id)"
     },
     {
-      "name": "Total Discount Amount (Line Items)",
-      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE * LINEITEM.L_DISCOUNT)"
+      "name": "Number of Unique Customers (who placed an order)",
+      "sql": "COUNT(DISTINCT orders.user_id)"
     },
     {
-      "name": "Total Net Revenue (Line Items)",
-      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE * (1 - LINEITEM.L_DISCOUNT))"
+      "name": "Total Products in Catalog",
+      "sql": "COUNT(DISTINCT products.id)"
     },
     {
-      "name": "Total Net Revenue With Tax (Line Items)",
-      "sql": "SUM(LINEITEM.L_EXTENDEDPRICE * (1 - LINEITEM.L_DISCOUNT) * (1 + LINEITEM.L_TAX))"
+      "name": "Cost of Goods Sold (COGS)",
+      "sql": "SUM(inventory_items.cost)"
     },
     {
-      "name": "Number of Line Items",
-      "sql": "COUNT(*)"
+      "name": "Total Profit",
+      "sql": "SUM(order_items.sale_price - inventory_items.cost)"
     },
     {
-      "name": "Number of Orders",
-      "sql": "COUNT(DISTINCT ORDERS.O_ORDERKEY)"
+      "name": "Total Web Events",
+      "sql": "COUNT(events.id)"
     },
     {
-      "name": "Average Order Value",
-      "sql": "AVG(ORDERS.O_TOTALPRICE)"
+      "name": "Average Product Retail Price (Catalog)",
+      "sql": "AVG(products.retail_price)"
     },
     {
-      "name": "Total Order Value",
-      "sql": "SUM(ORDERS.O_TOTALPRICE)"
+      "name": "Average Product Standard Cost (Catalog)",
+      "sql": "AVG(products.cost)"
     },
     {
-      "name": "Number of Unique Parts",
-      "sql": "COUNT(DISTINCT PART.P_PARTKEY)"
+      "name": "Total Quantity of Items in Orders",
+      "sql": "SUM(orders.num_of_item)"
     },
     {
-      "name": "Total Available Part Quantity (Inventory)",
-      "sql": "SUM(PARTSUPP.PS_AVAILQTY)"
-    },
-    {
-      "name": "Average Part Supply Cost",
-      "sql": "AVG(PARTSUPP.PS_SUPPLYCOST)"
-    },
-    {
-      "name": "Total Part Supply Cost",
-      "sql": "SUM(PARTSUPP.PS_SUPPLYCOST)"
-    },
-    {
-      "name": "Number of Suppliers",
-      "sql": "COUNT(DISTINCT SUPPLIER.S_SUPPKEY)"
-    },
-    {
-      "name": "Average Supplier Account Balance",
-      "sql": "AVG(SUPPLIER.S_ACCTBAL)"
+      "name": "Number of Unique Web Sessions",
+      "sql": "COUNT(DISTINCT events.session_id)"
     }
   ],
   "example_sqls": [
     {
-      "question": "What are the names and market segments of customers from 'CANADA'?",
-      "sql": "SELECT\n  T1.C_NAME,\n  T1.C_MKTSEGMENT\nFROM\n  `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T2 ON T1.C_NATIONKEY = T2.N_NATIONKEY\nWHERE\n  T2.N_NAME = 'CANADA'"
+      "question": "What is our Total Revenue?",
+      "sql": "SELECT SUM(oi.sale_price) AS Total_Revenue FROM bigframes-dev-perf.thelook_ecommerce.order_items AS oi"
     },
     {
-      "question": "Show the total gross revenue from line items for orders placed by 'Customer#000000001'.",
-      "sql": "SELECT\n  SUM(T1.L_EXTENDEDPRICE) AS TotalGrossRevenue\nFROM\n  `bigframes-dev-perf.tpch_0001g.LINEITEM` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.ORDERS` AS T2 ON T1.L_ORDERKEY = T2.O_ORDERKEY\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T3 ON T2.O_CUSTKEY = T3.C_CUSTKEY\nWHERE\n  T3.C_NAME = 'Customer#000000001'"
+      "question": "How many Number of Unique Orders were placed by users whose User State is 'California'?",
+      "sql": "SELECT COUNT(DISTINCT o.order_id) AS Number_of_Unique_Orders FROM bigframes-dev-perf.thelook_ecommerce.orders AS o JOIN bigframes-dev-perf.thelook_ecommerce.users AS u ON o.user_id = u.id WHERE u.state = 'California'"
     },
     {
-      "question": "List the total net revenue from line items for each region, ordered by region name.",
-      "sql": "SELECT\n  T5.R_NAME,\n  SUM(T1.L_EXTENDEDPRICE * (1 - T1.L_DISCOUNT)) AS TotalNetRevenue\nFROM\n  `bigframes-dev-perf.tpch_0001g.LINEITEM` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.ORDERS` AS T2 ON T1.L_ORDERKEY = T2.O_ORDERKEY\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T3 ON T2.O_CUSTKEY = T3.C_CUSTKEY\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T4 ON T3.C_NATIONKEY = T4.N_NATIONKEY\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.REGION` AS T5 ON T4.N_REGIONKEY = T5.R_REGIONKEY\nGROUP BY\n  T5.R_NAME\nORDER BY\n  T5.R_NAME"
+      "question": "List the top 5 Product Categories by Total Profit.",
+      "sql": "SELECT p.category AS Product_Category, SUM(oi.sale_price - ii.cost) AS Total_Profit FROM bigframes-dev-perf.thelook_ecommerce.order_items AS oi JOIN bigframes-dev-perf.thelook_ecommerce.inventory_items AS ii ON oi.inventory_item_id = ii.id JOIN bigframes-dev-perf.thelook_ecommerce.products AS p ON ii.product_id = p.id GROUP BY p.category ORDER BY Total_Profit DESC LIMIT 5"
     },
     {
-      "question": "Show the order date, customer name, and order status for the top 10 most recent '1-URGENT' priority orders placed in 1996.",
-      "sql": "SELECT\n  T1.O_ORDERDATE,\n  T2.C_NAME,\n  T1.O_ORDERSTATUS\nFROM\n  `bigframes-dev-perf.tpch_0001g.ORDERS` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T2 ON T1.O_CUSTKEY = T2.C_CUSTKEY\nWHERE\n  T1.O_ORDERPRIORITY = '1-URGENT' AND EXTRACT(YEAR FROM T1.O_ORDERDATE) = 1996\nORDER BY\n  T1.O_ORDERDATE DESC\nLIMIT 10"
+      "question": "Show the Total Revenue for each Order Date.",
+      "sql": "SELECT CAST(o.created_at AS DATE) AS Order_Date, SUM(oi.sale_price) AS Total_Revenue FROM bigframes-dev-perf.thelook_ecommerce.order_items AS oi JOIN bigframes-dev-perf.thelook_ecommerce.orders AS o ON oi.order_id = o.order_id GROUP BY Order_Date ORDER BY Order_Date ASC"
     },
     {
-      "question": "What is the average discount percentage for line items, grouped by part name, for parts of type 'SMALL PLATED COPPER'?",
-      "sql": "SELECT\n  T2.P_NAME,\n  AVG(T1.L_DISCOUNT) AS AverageDiscount\nFROM\n  `bigframes-dev-perf.tpch_0001g.LINEITEM` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.PART` AS T2 ON T1.L_PARTKEY = T2.P_PARTKEY\nWHERE\n  T2.P_TYPE = 'SMALL PLATED COPPER'\nGROUP BY\n  T2.P_NAME\nORDER BY\n  T2.P_NAME"
+      "question": "For users whose User Creation Date was in the year 2023 and who placed an order, what is their Average Sale Price (per Line Item) and the total Number of Line Items Sold, broken down by User Traffic Source?",
+      "sql": "SELECT u.traffic_source AS User_Traffic_Source, AVG(oi.sale_price) AS Average_Sale_Price_per_Line_Item, COUNT(oi.id) AS Number_of_Line_Items_Sold FROM bigframes-dev-perf.thelook_ecommerce.users AS u JOIN bigframes-dev-perf.thelook_ecommerce.orders AS o ON u.id = o.user_id JOIN bigframes-dev-perf.thelook_ecommerce.order_items AS oi ON o.order_id = oi.order_id WHERE EXTRACT(YEAR FROM u.created_at) = 2023 GROUP BY u.traffic_source ORDER BY User_Traffic_Source ASC"
     },
     {
-      "question": "For each nation, what is the count of suppliers and the total available inventory quantity from those suppliers? Order by the number of suppliers in descending order.",
-      "sql": "SELECT\n  T2.N_NAME,\n  COUNT(DISTINCT T1.S_SUPPKEY) AS NumberOfSuppliers,\n  SUM(T3.PS_AVAILQTY) AS TotalAvailableQuantity\nFROM\n  `bigframes-dev-perf.tpch_0001g.SUPPLIER` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T2 ON T1.S_NATIONKEY = T2.N_NATIONKEY\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.PARTSUPP` AS T3 ON T1.S_SUPPKEY = T3.PS_SUPPKEY\nGROUP BY\n  T2.N_NAME\nORDER BY\n  NumberOfSuppliers DESC"
+      "question": "For users whose User First Name is 'John', what are the different Event URIs they visited and how many Total Web Events were recorded for each URI?",
+      "sql": "SELECT e.uri AS Event_URI, COUNT(e.id) AS Total_Web_Events FROM bigframes-dev-perf.thelook_ecommerce.events AS e JOIN bigframes-dev-perf.thelook_ecommerce.users AS u ON e.user_id = u.id WHERE u.first_name = 'John' GROUP BY e.uri ORDER BY Total_Web_Events DESC"
     },
     {
-      "question": "Calculate the total gross revenue from line items that were shipped by 'AIR' between January 1, 1995, and December 31, 1995.",
-      "sql": "SELECT\n  SUM(T1.L_EXTENDEDPRICE) AS TotalGrossRevenue\nFROM\n  `bigframes-dev-perf.tpch_0001g.LINEITEM` AS T1\nWHERE\n  T1.L_SHIPMODE = 'AIR' AND T1.L_SHIPDATE BETWEEN DATE('1995-01-01') AND DATE('1995-12-31')"
+      "question": "List all Product Names and their Product Category from the 'Houston TX' Distribution Center Name.",
+      "sql": "SELECT p.name AS Product_Name, p.category AS Product_Category FROM bigframes-dev-perf.thelook_ecommerce.products AS p JOIN bigframes-dev-perf.thelook_ecommerce.distribution_centers AS dc ON p.distribution_center_id = dc.id WHERE dc.name = 'Houston TX' ORDER BY Product_Name ASC"
     },
     {
-      "question": "How many unique parts from 'Manufacturer#1' were included in orders with 'F' status, and what was their total line item quantity?",
-      "sql": "SELECT\n  COUNT(DISTINCT T1.P_PARTKEY) AS NumberOfUniqueParts,\n  SUM(T2.L_QUANTITY) AS TotalQuantityOfTheseParts\nFROM\n  `bigframes-dev-perf.tpch_0001g.PART` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.LINEITEM` AS T2 ON T1.P_PARTKEY = T2.L_PARTKEY\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.ORDERS` AS T3 ON T2.L_ORDERKEY = T3.O_ORDERKEY\nWHERE\n  T1.P_MFGR = 'Manufacturer#1' AND T3.O_ORDERSTATUS = 'F'"
+      "question": "Which Product Brands have an Average Product Retail Price (Catalog) greater than $100 and also have more than 10 products in their catalog?",
+      "sql": "SELECT p.brand AS Product_Brand, AVG(p.retail_price) AS Average_Retail_Price, COUNT(p.id) AS Number_of_Products_In_Brand FROM bigframes-dev-perf.thelook_ecommerce.products AS p GROUP BY p.brand HAVING AVG(p.retail_price) > 100 AND COUNT(p.id) > 10 ORDER BY Average_Retail_Price DESC"
     },
     {
-      "question": "What is the average customer account balance for each market segment within each nation? Display nation name and market segment, ordered by nation then market segment.",
-      "sql": "SELECT\n  T2.N_NAME,\n  T1.C_MKTSEGMENT,\n  AVG(T1.C_ACCTBAL) AS AverageAccountBalance\nFROM\n  `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T2 ON T1.C_NATIONKEY = T2.N_NATIONKEY\nGROUP BY\n  T2.N_NAME,\n  T1.C_MKTSEGMENT\nORDER BY\n  T2.N_NAME,\n  T1.C_MKTSEGMENT"
+      "question": "What is the Number of Unique Orders and their Total Revenue for orders with an Order Status of 'Shipped'?",
+      "sql": "SELECT COUNT(DISTINCT o.order_id) AS Number_of_Unique_Orders, SUM(oi.sale_price) AS Total_Revenue FROM bigframes-dev-perf.thelook_ecommerce.orders AS o JOIN bigframes-dev-perf.thelook_ecommerce.order_items AS oi ON o.order_id = oi.order_id WHERE o.status = 'Shipped'"
     },
     {
-      "question": "List all nations where the average order value for their customers is greater than the overall average order value of all orders. Show the nation name and their average order value.",
-      "sql": "SELECT\n  T3.N_NAME,\n  AVG(T1.O_TOTALPRICE) AS AvgOrderValueForNation\nFROM\n  `bigframes-dev-perf.tpch_0001g.ORDERS` AS T1\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.CUSTOMER` AS T2 ON T1.O_CUSTKEY = T2.C_CUSTKEY\n  INNER JOIN `bigframes-dev-perf.tpch_0001g.NATION` AS T3 ON T2.C_NATIONKEY = T3.N_NATIONKEY\nGROUP BY\n  T3.N_NAME\nHAVING\n  AVG(T1.O_TOTALPRICE) > (\n    SELECT\n      AVG(O_TOTALPRICE)\n    FROM\n      `bigframes-dev-perf.tpch_0001g.ORDERS`\n  )\nORDER BY\n  AvgOrderValueForNation DESC"
+      "question": "Calculate the Total Profit from products in the 'Tops & Tees' Product Category, sold to users with User Gender 'Female' and User Age greater than 30.",
+      "sql": "SELECT SUM(oi.sale_price - ii.cost) AS Total_Profit FROM bigframes-dev-perf.thelook_ecommerce.order_items AS oi JOIN bigframes-dev-perf.thelook_ecommerce.inventory_items AS ii ON oi.inventory_item_id = ii.id JOIN bigframes-dev-perf.thelook_ecommerce.products AS p ON ii.product_id = p.id JOIN bigframes-dev-perf.thelook_ecommerce.users AS u ON oi.user_id = u.id WHERE p.category = 'Tops & Tees' AND u.gender = 'F' AND u.age > 30"
     }
   ]
 }

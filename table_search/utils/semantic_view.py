@@ -35,7 +35,7 @@ print(env_file_path)
 # Load environment variables from the specified .env file
 load_dotenv(dotenv_path=env_file_path, verbose=True, override=True)
 BQ_PROJECT_ID = os.getenv("BQ_PROJECT_ID")
-BQ_DATASET_IDS = os.getenv("BQ_DATASET_IDS")
+BQ_DATASET_ID = os.getenv("BQ_DATASET_ID")
 
 # Init BQ client.
 client = bigquery.Client(project=BQ_PROJECT_ID)
@@ -210,11 +210,7 @@ def validate_and_inject_examples(llm_response_str: str, schema_json_str: str):
     
 
 def gen_table_info():
-    datasets = [item.strip() for item in BQ_DATASET_IDS.split(',')]
-    if len(datasets) != 1:
-        raise NotImplementedError("Only for one dataset.")
-    
-    tables = client.list_tables(datasets[0])
+    tables = client.list_tables(BQ_DATASET_ID)
     table_list = []
     for table_id in tables:
         table = client.get_table(table_id)
@@ -233,7 +229,7 @@ def gen_table_info():
 
 def gen_semantic_view():
     table_info = gen_table_info()
-    print("Starting to call LLM...")
+    print("--- Starting to call LLM ---")
     response = model.generate_content(
         semantic_gen_prompt(table_info),
         generation_config=GenerationConfig(
@@ -242,10 +238,10 @@ def gen_semantic_view():
         safety_settings=SAFETY_FILTER_CONFIG,
     ).text
     print(response)
-    print("Starting to call LLM for SQL")
+    print("--- Starting to call LLM for SQL ---")
   
     sql_response = model.generate_content(
-        sql_gen_prompt(response, project=BQ_PROJECT_ID, dataset=BQ_DATASET_IDS.split(",")[0]),
+        sql_gen_prompt(response, project=BQ_PROJECT_ID, dataset=BQ_DATASET_ID),
         generation_config=GenerationConfig(
             temperature=0.01,
         ),
@@ -253,7 +249,6 @@ def gen_semantic_view():
     ).text
     print(sql_response)
 
-    print("Starting to verify SQL")
     final_view = validate_and_inject_examples(sql_response, response)
     output_filename = Path(__file__).parent / "output" / "thelook_ecommerce" / "v2_prompt_w_sql.json"
     with open(output_filename, 'w', encoding='utf-8') as f:
