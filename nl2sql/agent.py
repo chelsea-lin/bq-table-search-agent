@@ -24,33 +24,24 @@ from google.genai import types
 
 from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
-from google.adk.tools import load_artifacts
 
-from .sub_agents.bigquery.tools import (
-    get_database_settings as get_bq_database_settings,
-)
-from .prompts import return_instructions_root
-from .tools import call_db_agent
+from . import tools
+from .chase_sql import chase_db_tools
+from .prompts import return_instructions_bigquery
 
-date_today = date.today()
+NL2SQL_METHOD = os.getenv("NL2SQL_METHOD", "BASELINE")
 
 
 def setup_before_agent_call(callback_context: CallbackContext):
     """Setup the agent."""
 
-    # setting up database settings in session.state
     if "database_settings" not in callback_context.state:
-        db_settings = dict()
-        db_settings["use_database"] = "BigQuery"
-        callback_context.state["all_db_settings"] = db_settings
-
-    # setting up schema in instruction
-    if callback_context.state["all_db_settings"]["use_database"] == "BigQuery":
-        callback_context.state["database_settings"] = get_bq_database_settings()
+        callback_context.state["database_settings"] = \
+            tools.get_database_settings()
         schema = callback_context.state["database_settings"]["bq_ddl_schema"]
 
         callback_context._invocation_context.agent.instruction = (
-            return_instructions_root()
+            return_instructions_bigquery()
             + f"""
 
     --------- The BigQuery schema of the relevant data with a few sample rows. ---------
@@ -62,21 +53,16 @@ def setup_before_agent_call(callback_context: CallbackContext):
 
 
 root_agent = Agent(
-    model=os.getenv("ROOT_AGENT_MODEL"),
-    name="table_search_multiagent",
-    instruction=return_instructions_root(),
-    global_instruction=(
-        f"""
-        You are a BigQuery AI expert, acting as an intelligent bridge to a complex database.
-        Your mission is to understand a user's natural language request and help them discover the exact data they need.
-        Your capabilities include: finding relevant datasets, identifying specific tables, and clarifying schema information.
-        Today's date is {date_today}.
-        """
-    ),
+    model=os.getenv("BIGQUERY_AGENT_MODEL"),
+    name="database_agent",
+    instruction=return_instructions_bigquery(),
     tools=[
-        call_db_agent,
-        # call_ds_agent,
-        # load_artifacts,
+        (
+            chase_db_tools.initial_bq_nl2sql
+            if NL2SQL_METHOD == "CHASE"
+            else tools.initial_bq_nl2sql
+        ),
+        tools.run_bigquery_validation,
     ],
     before_agent_callback=setup_before_agent_call,
     generate_content_config=types.GenerateContentConfig(temperature=0.01),
