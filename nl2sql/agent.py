@@ -49,7 +49,7 @@ def setup_before_agent_call(callback_context: CallbackContext):
 
     """
         )
-        print(f"DEBUG: {callback_context._invocation_context.agent.instruction}")
+        # print(f"DEBUG: {callback_context._invocation_context.agent.instruction}")
 
 
 root_agent = Agent(

@@ -161,13 +161,20 @@ You are a BigQuery SQL expert tasked with answering user's questions about BigQu
 
 - **Semantic View Priority:** The `Semantic View` block provides pre-defined business metrics and organizational context. If this view is provided, you **must** prioritize its logic and definitions. It serves as the source of truth for business concepts and calculations; your query should reflect these definitions accurately.
 - **Table Referencing:** Always use the full table name with the database prefix in the SQL statement.  Tables should be referred to using a fully qualified name with enclosed in backticks (`) e.g. `project_name.dataset_name.table_name`.  Table names are case sensitive.
-- **Joins:** Join as few tables as possible. When joining tables, ensure all join columns are the same data type. Analyze the database and the table schema provided to understand the relationships between columns and tables.
+- **Joins:** You must prioritize the `relationships` defined in the `Semantic View` to construct all `JOIN` clauses. If a required join path is not available there, you may then analyze the raw table schema, joining as few tables as possible and ensuring the join columns share the same data type.
 - **Aggregations:**  Use all non-aggregated columns from the `SELECT` statement in the `GROUP BY` clause.
 - **SQL Syntax:** Return syntactically and semantically correct SQL for BigQuery with proper relation mapping (i.e., project_id, owner, table, and column relation). Use SQL `AS` statement to assign a new name temporarily to a table column or even a table wherever needed. Always enclose subqueries and union queries in parentheses.
 - **Column Usage:** Use *ONLY* the column names (column_name) mentioned in the Table Schema. Do *NOT* use any other column names. Associate `column_name` mentioned in the Table Schema only to the `table_name` specified under Table Schema.
 - **FILTERS:** You should write query effectively to reduce and minimize the total rows to be returned. For example, you can use filters (like `WHERE`, `HAVING`, etc. (like 'COUNT', 'SUM', etc.) in the SQL query.
 - **LIMIT ROWS:**  The maximum number of rows returned should be less than {MAX_NUM_ROWS}.
 
+**Interpreting the Semantic View JSON:**
+- **`relationships`:** Use this array to construct all `JOIN` clauses. It provides the exact `from_table`, `from_column`, `to_table`, and `to_column` for building accurate connections.
+- **`dimensions`:** When a user's question mentions a descriptive attribute (e.g., "by product category" or "for users from California"), find the corresponding `name` in the `dimensions` array and use its `column` value in your `SELECT`, `WHERE`, or `GROUP BY` clause.
+- **`metrics`:** When a user's question asks for a calculation (e.g., "what is the total revenue?"), find the corresponding `name` in the `metrics` array. You **must** use the exact SQL expression from its `sql` field for the aggregation (e.g., `SUM(order_items.sale_price)`).
+- **`example_sqls`:** Study these question-and-SQL pairs to understand the required query patterns, aliasing conventions, and how to combine dimensions and metrics effectively. Your generated query should emulate the style and logic of these examples.
+
+    
 **Input:**
 
 * **Schema:** The database structure is defined by the following table schemas:
@@ -196,6 +203,15 @@ You are a BigQuery SQL expert tasked with answering user's questions about BigQu
 **Think Step-by-Step:**
 
 * Carefully consider the schema, semantic view, question, guidelines, and best practices outlined above to generate the correct BigQuery SQL.
+
+
+
+**Interpreting the Semantic View JSON:**
+    * **`relationships`:** Use this array to construct all `JOIN` clauses. It provides the exact `from_table`, `from_column`, `to_table`, and `to_column` for building accurate connections.
+    * **`dimensions`:** When a user's question mentions a descriptive attribute (e.g., "by product category" or "for users from California"), find the corresponding `name` in the `dimensions` array and use its `column` value in your `SELECT`, `WHERE`, or `GROUP BY` clause.
+    * **`metrics`:** When a user's question asks for a calculation (e.g., "what is the total revenue?"), find the corresponding `name` in the `metrics` array. You **must** use the exact SQL expression from its `sql` field for the aggregation (e.g., `SUM(order_items.sale_price)`).
+    * **`example_sqls`:** Study these question-and-SQL pairs to understand the required query patterns, aliasing conventions, and how to combine dimensions and metrics effectively. Your generated query should emulate the style and logic of these examples.
+
 
    """
 
@@ -326,6 +342,6 @@ def run_bigquery_validation(
     ) as e:  # Catch generic exceptions from BigQuery  # pylint: disable=broad-exception-caught
         final_result["error_message"] = f"Invalid SQL: {e}"
 
-    print("\n run_bigquery_validation final_result: \n", final_result)
+    # print("\n run_bigquery_validation final_result: \n", final_result)
 
     return final_result
