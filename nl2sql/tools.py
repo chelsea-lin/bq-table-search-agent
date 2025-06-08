@@ -139,12 +139,14 @@ def get_bigquery_schema(dataset_id, client=None, project_id=None):
 
 def initial_bq_nl2sql(
     question: str,
+    semantic_view: str,
     tool_context: ToolContext,
 ) -> str:
     """Generates an initial SQL query from a natural language question.
 
     Args:
         question (str): Natural language question.
+        semantic_view (str): Semantic view information
         tool_context (ToolContext): The tool context to use for generating the SQL
           query.
 
@@ -157,37 +159,53 @@ You are a BigQuery SQL expert tasked with answering user's questions about BigQu
 
 **Guidelines:**
 
+- **Semantic View Priority:** The `Semantic View` block provides pre-defined business metrics and organizational context. If this view is provided, you **must** prioritize its logic and definitions. It serves as the source of truth for business concepts and calculations; your query should reflect these definitions accurately.
 - **Table Referencing:** Always use the full table name with the database prefix in the SQL statement.  Tables should be referred to using a fully qualified name with enclosed in backticks (`) e.g. `project_name.dataset_name.table_name`.  Table names are case sensitive.
 - **Joins:** Join as few tables as possible. When joining tables, ensure all join columns are the same data type. Analyze the database and the table schema provided to understand the relationships between columns and tables.
 - **Aggregations:**  Use all non-aggregated columns from the `SELECT` statement in the `GROUP BY` clause.
 - **SQL Syntax:** Return syntactically and semantically correct SQL for BigQuery with proper relation mapping (i.e., project_id, owner, table, and column relation). Use SQL `AS` statement to assign a new name temporarily to a table column or even a table wherever needed. Always enclose subqueries and union queries in parentheses.
 - **Column Usage:** Use *ONLY* the column names (column_name) mentioned in the Table Schema. Do *NOT* use any other column names. Associate `column_name` mentioned in the Table Schema only to the `table_name` specified under Table Schema.
-- **FILTERS:** You should write query effectively  to reduce and minimize the total rows to be returned. For example, you can use filters (like `WHERE`, `HAVING`, etc. (like 'COUNT', 'SUM', etc.) in the SQL query.
+- **FILTERS:** You should write query effectively to reduce and minimize the total rows to be returned. For example, you can use filters (like `WHERE`, `HAVING`, etc. (like 'COUNT', 'SUM', etc.) in the SQL query.
 - **LIMIT ROWS:**  The maximum number of rows returned should be less than {MAX_NUM_ROWS}.
 
-**Schema:**
+**Input:**
 
-The database structure is defined by the following table schemas (possibly with sample rows):
+* **Schema:** The database structure is defined by the following table schemas:
 
-```
-{SCHEMA}
-```
+    ```
+    {SCHEMA}
+    ```
 
-**Natural language question:**
+* **Question:**
 
-```
-{QUESTION}
-```
+    ```
+    {QUESTION}
+    ```
 
-**Think Step-by-Step:** Carefully consider the schema, question, guidelines, and best practices outlined above to generate the correct BigQuery SQL.
+* **Semantic View (Optional):**
+
+    ```
+    {SEMANTIC_VIEW}
+    ```
+
+**Output Requirements:**
+
+* **Your response must be ONLY the raw BigQuery SQL query string.**
+
+
+**Think Step-by-Step:**
+
+* Carefully consider the schema, semantic view, question, guidelines, and best practices outlined above to generate the correct BigQuery SQL.
 
    """
 
     ddl_schema = tool_context.state["database_settings"]["bq_ddl_schema"]
 
     prompt = prompt_template.format(
-        MAX_NUM_ROWS=MAX_NUM_ROWS, SCHEMA=ddl_schema, QUESTION=question
+        MAX_NUM_ROWS=MAX_NUM_ROWS, SCHEMA=ddl_schema, QUESTION=question, SEMANTIC_VIEW=semantic_view
     )
+
+    print("NL2SQL prompt: \n", prompt)
 
     response = llm_client.models.generate_content(
         model=os.getenv("BASELINE_NL2SQL_MODEL"),
@@ -199,7 +217,7 @@ The database structure is defined by the following table schemas (possibly with 
     if sql:
         sql = sql.replace("```sql", "").replace("```", "").strip()
 
-    print("\n sql:", sql)
+    # print("\n sql:", sql)
 
     tool_context.state["sql_query"] = sql
 
