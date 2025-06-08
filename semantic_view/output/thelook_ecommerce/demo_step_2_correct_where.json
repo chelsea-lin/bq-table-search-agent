@@ -1,0 +1,64 @@
+{
+  "tables": [
+    {
+      "name": "distribution_centers",
+      "primary_key": "id"
+    },
+    {
+      "name": "events",
+      "primary_key": "id"
+    },
+    {
+      "name": "inventory_items",
+      "primary_key": "id"
+    },
+    {
+      "name": "order_items",
+      "primary_key": "id"
+    },
+    {
+      "name": "orders",
+      "primary_key": "order_id"
+    },
+    {
+      "name": "products",
+      "primary_key": "id"
+    },
+    {
+      "name": "users",
+      "primary_key": "id"
+    }
+  ],
+  "relationships": [
+    {
+      "from_table": "order_items",
+      "from_column": "order_id",
+      "to_table": "orders",
+      "to_column": "order_id"
+    },
+    {
+      "from_table": "order_items",
+      "from_column": "user_id",
+      "to_table": "users",
+      "to_column": "id"
+    },
+    {
+      "from_table": "order_items",
+      "from_column": "product_id",
+      "to_table": "products",
+      "to_column": "id"
+    },
+    {
+      "from_table": "order_items",
+      "from_column": "inventory_item_id",
+      "to_table": "inventory_items",
+      "to_column": "id"
+    }
+  ],
+  "example_sqls": [
+    {
+      "question": "What is our Total Revenue?",
+      "sql": "SELECT SUM(oi.sale_price) AS Total_Revenue FROM bigframes-dev-perf.thelook_ecommerce.order_items AS oi WHERE oi.status NOT IN ('Cancelled', 'Returned') "
+    }
+  ]
+}
