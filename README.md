@@ -22,7 +22,7 @@ cp .env-example .env
 3. **Generate semantic view**
 
 ```bash
-python table_search/utils/semantic_view.py
+python semantic_view/semantic_view.py
 ```
 
 4. **Run Agents**

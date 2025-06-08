@@ -29,7 +29,7 @@ import json
 
 
 # Define the path to the .env file
-env_file_path = Path(__file__).parent.parent.parent / ".env"
+env_file_path = Path(__file__).parent.parent / ".env"
 print(env_file_path)
 
 # Load environment variables from the specified .env file
