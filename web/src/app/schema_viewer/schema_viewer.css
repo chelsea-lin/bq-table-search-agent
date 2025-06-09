@@ -50,12 +50,12 @@ th.mat-mdc-header-cell {
 
 /* Table container styles */
 .table-container {
-  padding: 16px 0;
+  padding: 1rem;
 }
 
 /* Table actions styles */
 .table-actions {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .table-actions button {
@@ -72,16 +72,21 @@ th.mat-mdc-header-cell {
 .empty-state {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  min-height: 500px;
-  box-sizing: border-box;
-  padding: 24px;
-  text-align: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
 }
 
 .upload-message {
-  margin-bottom: 24px;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.87);
+  font-size: 1.2rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
+}
+
+.schema-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  margin-bottom: 1rem;
 } 

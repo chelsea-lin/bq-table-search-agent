@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SemanticSchema, Table, Relationship, Dimension, Metric, ExampleSql, createSemanticSchema } from '../data_models/semantic_schema';
+import { SemanticSchema, Table, Relationship, ExampleSql, createSemanticSchema } from '../data_models/semantic_schema';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
@@ -10,6 +10,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+
+type SchemaSection = 'tables' | 'relationships' | 'exampleSqls';
+type SchemaItem = Table | Relationship | ExampleSql;
 
 @Component({
   selector: 'app-schema-viewer',
@@ -36,8 +39,6 @@ export class SchemaViewer {
   // Column definitions for each table
   tableColumns: string[] = ['name', 'primary_key', 'actions'];
   relationshipColumns: string[] = ['from_table', 'from_column', 'to_table', 'to_column', 'actions'];
-  dimensionColumns: string[] = ['name', 'column', 'actions'];
-  metricColumns: string[] = ['name', 'sql', 'actions'];
   exampleSqlColumns: string[] = ['name', 'sql', 'actions'];
 
   // Track expansion state
@@ -50,8 +51,8 @@ export class SchemaViewer {
     }
   }
 
-  deleteRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics' | 'exampleSqls', index: number) {
-    if (this.schema) {
+  deleteRow(type: SchemaSection, index: number) {
+    if (this.schema && this.schema[type]) {
       // Create a new array to ensure change detection
       const newArray = [...this.schema[type]];
       newArray.splice(index, 1);
@@ -66,30 +67,28 @@ export class SchemaViewer {
     }
   }
 
-  addRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics' | 'exampleSqls') {
+  addRow(type: SchemaSection) {
     if (this.schema) {
       const newRow = this.createEmptyRow(type);
+      const currentArray = this.schema[type] || [];
+      
       // Create a new array to ensure change detection
       this.schema = {
         ...this.schema,
-        [type]: [...this.schema[type], newRow]
+        [type]: [...currentArray, newRow]
       };
       this.onTableDataChange();
     }
   }
 
-  private createEmptyRow(type: 'tables' | 'relationships' | 'dimensions' | 'metrics' | 'exampleSqls'): any {
+  private createEmptyRow(type: SchemaSection): SchemaItem {
     switch (type) {
       case 'tables':
         return { name: '', primary_key: '' };
       case 'relationships':
         return { from_table: '', from_column: '', to_table: '', to_column: '' };
-      case 'dimensions':
-        return { name: '', column: '' };
-      case 'metrics':
-        return { name: '', sql: '' };
       case 'exampleSqls':
-        return { name: '', sql: '' };
+        return { question: '', sql: '' };
     }
   }
 
