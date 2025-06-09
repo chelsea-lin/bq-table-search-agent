@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AgentResponse } from './data_models/agent_response';
 
 
-const AGENT_NAME = "table_search"
+const AGENT_NAME = "nl2sql"
 const SESSION_ID = "my_session"
 const USER_ID = "u_123"
 const HTTP_OPTIONS = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
