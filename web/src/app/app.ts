@@ -101,11 +101,12 @@ export class App {
   }
 
   private getTextResponse(response: AgentResponse): string {
+    let result = ""
     for (let chunk of response) {
-      if (chunk.content) {
-        return chunk.content.parts[0].text;
+      if (chunk.content?.parts[0]?.text) {
+        result += chunk.content.parts[0].text;
       }
     } 
-    return "";
+    return result;
   }
 }
