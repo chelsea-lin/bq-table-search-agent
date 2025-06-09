@@ -89,4 +89,10 @@ th.mat-mdc-header-cell {
   justify-content: flex-end;
   padding: 1rem;
   margin-bottom: 1rem;
+}
+
+.schema-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 } 

@@ -54,8 +54,17 @@ export class App {
     return this._semanticSchema;
   }
 
-  set semanticSchema(value: SemanticSchema) {
-    this._semanticSchema = value;
+  set semanticSchema(value: SemanticSchema | null) {
+    console.log('App updating schema:', value);
+    if (value) {
+      this._semanticSchema = {
+        tables: [...value.tables],
+        relationships: [...value.relationships],
+        exampleSqls: value.exampleSqls ? [...value.exampleSqls] : undefined
+      };
+    } else {
+      this._semanticSchema = null;
+    }
   }
 
   ngOnInit() {

@@ -34,7 +34,7 @@ type SchemaItem = Table | Relationship | ExampleSql;
 })
 export class SchemaViewer {
   @Input() schema: SemanticSchema | null = null;
-  @Output() schemaChange = new EventEmitter<SemanticSchema>();
+  @Output() schemaChange = new EventEmitter<SemanticSchema | null>();
   
   // Column definitions for each table
   tableColumns: string[] = ['name', 'primary_key', 'actions'];
@@ -43,6 +43,11 @@ export class SchemaViewer {
 
   // Track expansion state
   expandedPanels = new Set<string>(['tables']); // Default to having tables expanded
+
+  deleteSchema() {
+    this.schema = null;
+    this.schemaChange.emit(null);
+  }
 
   onTableDataChange() {
     if (this.schema) {

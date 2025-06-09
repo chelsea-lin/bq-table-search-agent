@@ -10,10 +10,16 @@
 <ng-container *ngIf="schema">
   <!-- Schema content -->
   <div class="schema-header">
-    <button mat-raised-button color="primary" (click)="fileInput.click()">
-      <mat-icon>upload_file</mat-icon>
-      Replace Schema
-    </button>
+    <div class="schema-actions">
+      <button mat-raised-button color="primary" (click)="fileInput.click()">
+        <mat-icon>upload_file</mat-icon>
+        Replace Schema
+      </button>
+      <button mat-raised-button color="warn" (click)="deleteSchema()">
+        <mat-icon>delete</mat-icon>
+        Delete Schema
+      </button>
+    </div>
   </div>
 
   <mat-accordion multi>
